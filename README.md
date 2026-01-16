@@ -167,3 +167,12 @@ Do not use temporary email services for illegal or abusive activities.
 > (APK / Website / Play Store / Direct link)
 
 ---
+## 🌍 Open Website
+
+<p align="left">
+  <a href="https://hanter-xd-official.github.io/TEMP-MAIL/" target="_blank">
+    <img src="https://img.shields.io/badge/Open-Website-6200EA?style=for-the-badge&logo=googlechrome&logoColor=white" />
+  </a>
+</p>
+
+---
