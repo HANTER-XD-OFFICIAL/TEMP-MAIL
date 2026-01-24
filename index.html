@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Temp Mail Pro - Ultimate</title>
+    
+    <!-- Google Fonts: Space Grotesk -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Material Symbols -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            900: '#4c1d95',
+                        }
+                    },
+                    animation: {
+                        'slide-up': 'slideUp 0.4s ease-out',
+                    },
+                    keyframes: {
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .loader-bar { width: 0%; height: 4px; background: linear-gradient(90deg, #8b5cf6, #ec4899); transition: width 0.2s ease; border-radius: 99px; }
+        .email-frame { width: 100%; height: 100%; border: none; display: block; }
+        
+        /* Toast Animation */
+        .toast-enter { transform: translateY(100%); opacity: 0; }
+        .toast-enter-active { transform: translateY(0); opacity: 1; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .toast-exit-active { transform: translateY(100%); opacity: 0; transition: all 0.3s ease-in; }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+            transition: transform 0.2s;
+        }
+        .fab:active { transform: scale(0.95); }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300 h-screen overflow-hidden flex flex-col relative">
+
+    <!-- ================= SPIASH SCREEN ================= -->
+    <div id="splash-screen" class="fixed inset-0 z-50 bg-white dark:bg-gray-900 flex flex-col items-center justify-center transition-opacity duration-500">
+        <div class="text-center">
+            <span class="material-symbols-rounded text-6xl text-brand-500 mb-4">mail</span>
+            <h1 class="text-3xl font-bold tracking-tight mb-1">Temp Mail</h1>
+            <p class="text-gray-500 text-sm mb-8">Loading System...</p>
+            <div class="w-48 h-1 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
+                <div id="loading-bar" class="loader-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= APP HEADER ================= -->
+    <header class="flex-none px-5 py-4 flex items-center justify-between bg-white/80 dark:bg-gray-900/80 backdrop-blur-md sticky top-0 z-30 border-b border-gray-100 dark:border-gray-800">
+        <div class="flex items-center gap-2">
+            <span class="material-symbols-rounded text-brand-500">mark_email_unread</span>
+            <span class="font-bold text-lg tracking-tight">Temp Mail</span>
+        </div>
+        <button id="theme-toggle" class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+            <span class="material-symbols-rounded text-gray-600 dark:text-gray-300">dark_mode</span>
+        </button>
+    </header>
+
+    <!-- ================= MAIN CONTENT ================= -->
+    <main id="home-view" class="flex-1 overflow-y-auto no-scrollbar p-4 pb-32">
+        
+        <!-- Control Card -->
+        <section class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 mb-6 relative overflow-hidden animate-slide-up">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-500 to-pink-500"></div>
+            
+            <div class="flex justify-between items-center mb-2">
+                <span class="text-xs font-medium uppercase tracking-wider text-gray-400">Your Address</span>
+                <span id="timer-display" class="text-xs font-bold text-brand-500 bg-brand-50 dark:bg-brand-900/30 px-2 py-1 rounded-md">10:00</span>
+            </div>
+
+            <div class="relative group mb-5">
+                <div id="email-address" class="text-lg sm:text-xl font-bold break-all text-gray-900 dark:text-white select-all">Generating...</div>
+                <button onclick="copyToClipboard()" class="mt-3 w-full py-2.5 bg-brand-500 hover:bg-brand-600 text-white rounded-xl font-medium flex items-center justify-center gap-2 shadow-lg shadow-brand-500/20 active:scale-95 transition-all">
+                    <span class="material-symbols-rounded text-lg">content_copy</span>
+                    <span>Copy Email</span>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2">
+                <button onclick="generateNewEmailWithConfirm()" class="flex flex-col items-center justify-center gap-1 p-3 rounded-xl bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-95 transition-all">
+                    <span class="material-symbols-rounded text-blue-500">sync_alt</span>
+                    <span class="text-[10px] font-bold text-gray-500 dark:text-gray-300">CHANGE</span>
+                </button>
+                <button onclick="extendTimer()" class="flex flex-col items-center justify-center gap-1 p-3 rounded-xl bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-95 transition-all">
+                    <span class="material-symbols-rounded text-orange-500">timer</span>
+                    <span class="text-[10px] font-bold text-gray-500 dark:text-gray-300">EXTEND</span>
+                </button>
+                <button onclick="deleteEmail()" class="flex flex-col items-center justify-center gap-1 p-3 rounded-xl bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-95 transition-all">
+                    <span class="material-symbols-rounded text-red-500">delete</span>
+                    <span class="text-[10px] font-bold text-gray-500 dark:text-gray-300">DELETE</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Inbox List -->
+        <div class="flex items-center justify-between mb-3 px-1 animate-slide-up" style="animation-delay: 0.1s;">
+            <h2 class="text-lg font-bold flex items-center gap-2">Inbox <span id="inbox-count" class="bg-gray-200 dark:bg-gray-700 text-xs px-2 py-0.5 rounded-full">0</span></h2>
+            <button onclick="refreshInbox()" id="btn-refresh" class="p-2 rounded-full text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800">
+                <span class="material-symbols-rounded">refresh</span>
+            </button>
+        </div>
+
+        <ul id="inbox-list" class="space-y-3 mb-6 animate-slide-up" style="animation-delay: 0.2s;">
+            <li class="flex flex-col items-center justify-center py-10 text-center opacity-60">
+                <span class="material-symbols-rounded text-4xl text-gray-300 mb-2">inbox</span>
+                <p class="text-sm text-gray-500">Inbox is empty</p>
+            </li>
+        </ul>
+
+        <!-- ================= CONTACT SUPPORT ================= -->
+        <section class="mt-8 mb-6 animate-slide-up" style="animation-delay: 0.25s;">
+            <div class="flex items-center gap-2 mb-4 px-1">
+                <span class="material-symbols-rounded text-brand-500">support_agent</span>
+                <h2 class="text-lg font-bold">Contact Support</h2>
+            </div>
+            
+            <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-sm border border-gray-100 dark:border-gray-700">
+                <div class="grid grid-cols-5 gap-3">
+                    
+                    <!-- FACEBOOK -->
+                    <a href="https://www.facebook.com/MD.RASEL.8.2.3.4" target="_blank" class="flex flex-col items-center gap-2 group">
+                        <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.34 11.93 5.96 14.15 5.96C15.21 5.96 16.12 6.04 16.12 6.04V8.51H15.01C13.77 8.51 13.38 9.28 13.38 10.07V12.06H16.16L15.72 14.96H13.38V21.96C18.16 21.21 21.82 17.06 21.82 12.06C21.82 6.53 17.32 2.04 12 2.04Z"/></svg>
+                        </div>
+                        <span class="text-[10px] font-medium text-gray-500">Facebook</span>
+                    </a>
+
+                    <!-- WHATSAPP -->
+                    <a href="https://wa.me/8801882278234" target="_blank" class="flex flex-col items-center gap-2 group">
+                        <div class="w-12 h-12 rounded-2xl bg-green-50 dark:bg-green-900/20 flex items-center justify-center text-green-600 dark:text-green-400 group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2ZM12.05 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 14.99 3.81 13.47 3.81 11.91C3.81 7.37 7.5 3.67 12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.05 20.15Z"/></svg>
+                        </div>
+                        <span class="text-[10px] font-medium text-gray-500">WhatsApp</span>
+                    </a>
+
+                    <!-- GMAIL -->
+                    <a href="mailto:alexraselchodhury@gmail.com" class="flex flex-col items-center gap-2 group">
+                        <div class="w-12 h-12 rounded-2xl bg-red-50 dark:bg-red-900/20 flex items-center justify-center text-red-600 dark:text-red-400 group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4C2.9 4 2.01 4.9 2.01 6L2 18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4ZM20 8L12 13L4 8V6L12 11L20 6V8Z"/></svg>
+                        </div>
+                        <span class="text-[10px] font-medium text-gray-500">Gmail</span>
+                    </a>
+
+                    <!-- TELEGRAM -->
+                    <a href="https://t.me/HANTER_XD_OFFICIAL" target="_blank" class="flex flex-col items-center gap-2 group">
+                        <div class="w-12 h-12 rounded-2xl bg-sky-50 dark:bg-sky-900/20 flex items-center justify-center text-sky-500 dark:text-sky-400 group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 11.944 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+                        </div>
+                        <span class="text-[10px] font-medium text-gray-500">Telegram</span>
+                    </a>
+
+                    <!-- INSTAGRAM -->
+                    <a href="https://www.instagram.com/_md_rasel_34" target="_blank" class="flex flex-col items-center gap-2 group">
+                        <div class="w-12 h-12 rounded-2xl bg-pink-50 dark:bg-pink-900/20 flex items-center justify-center text-pink-600 dark:text-pink-400 group-hover:scale-110 transition-transform">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/></svg>
+                        </div>
+                        <span class="text-[10px] font-medium text-gray-500">Instagram</span>
+                    </a>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <div class="text-center animate-slide-up" style="animation-delay: 0.3s;">
+            <p class="text-xs font-medium text-gray-400">Developed by <span class="text-brand-500 font-bold">MD RASEL</span></p>
+        </div>
+    </main>
+
+    <!-- ================= FLOATING ACTION BUTTON (SEND) ================= -->
+    <button onclick="openCompose()" class="fab z-30 w-14 h-14 bg-brand-600 rounded-full text-white flex items-center justify-center">
+        <span class="material-symbols-rounded text-2xl">edit</span>
+    </button>
+
+    <!-- ================= EMAIL VIEWER ================= -->
+    <div id="email-view" class="fixed inset-0 z-40 bg-white dark:bg-gray-900 transform translate-x-full transition-transform duration-300 flex flex-col">
+        <div class="px-5 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center gap-4 bg-white dark:bg-gray-900">
+            <button onclick="closeEmailView()" class="p-2 -ml-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
+                <span class="material-symbols-rounded">arrow_back</span>
+            </button>
+            <h2 class="font-bold text-lg truncate">Message</h2>
+        </div>
+        <div class="p-5 border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
+            <h3 id="view-subject" class="font-bold text-lg mb-1">Subject</h3>
+            <p class="text-xs text-gray-500 flex justify-between">
+                <span id="view-sender">Sender</span>
+                <span id="view-date">Date</span>
+            </p>
+        </div>
+        <div class="flex-1 relative bg-white w-full">
+            <iframe id="view-frame" class="email-frame" sandbox="allow-popups"></iframe>
+        </div>
+    </div>
+
+    <!-- ================= COMPOSE VIEW (READY FOR FUTURE) ================= -->
+    <div id="compose-view" class="fixed inset-0 z-50 bg-white dark:bg-gray-900 transform translate-y-full transition-transform duration-300 flex flex-col">
+        <!-- Header -->
+        <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+            <button onclick="closeCompose()" class="p-2 -ml-2 text-gray-500">Cancel</button>
+            <h2 class="font-bold text-lg">New Message</h2>
+            <button onclick="sendEmail()" id="btn-send" class="px-4 py-1.5 bg-brand-500 text-white rounded-lg font-medium text-sm">Send</button>
+        </div>
+        
+        <!-- Form -->
+        <div class="flex-1 p-4 flex flex-col gap-4">
+            <!-- Status Alert for User -->
+            <div class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-xl border border-blue-100 dark:border-blue-800 flex items-start gap-3">
+                <span class="material-symbols-rounded text-blue-500 text-lg mt-0.5">info</span>
+                <div>
+                    <p class="text-xs font-bold text-blue-600 dark:text-blue-300">System Ready</p>
+                    <p class="text-[10px] text-blue-500 dark:text-blue-400 leading-tight">Sending is enabled but may be restricted by the server for external domains (Gmail/Yahoo) at this time.</p>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">To</label>
+                <input type="email" id="compose-to" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-brand-500 transition-colors" placeholder="recipient@example.com">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">Subject</label>
+                <input type="text" id="compose-subject" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-brand-500 transition-colors" placeholder="What's this about?">
+            </div>
+            <div class="flex-1 flex flex-col">
+                <label class="block text-xs font-medium text-gray-500 mb-1">Message</label>
+                <textarea id="compose-body" class="flex-1 w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-brand-500 transition-colors resize-none" placeholder="Write your email here..."></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= BOTTOM NAV ================= -->
+    <div class="fixed bottom-0 left-0 w-full p-4 bg-gradient-to-t from-white via-white to-transparent dark:from-gray-900 dark:via-gray-900 z-30">
+        <div class="flex gap-3">
+            <!-- DOWNLOAD BUTTON UPDATED -->
+            <a href="https://github.com/HANTER-XD-OFFICIAL/TEMP-MAIL/releases/tag/TEMP-MAIL_APK" target="_blank" class="flex-1 bg-gray-900 dark:bg-white dark:text-gray-900 text-white py-3 rounded-2xl font-bold text-center text-sm shadow-lg flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all">
+                <span class="material-symbols-rounded">download</span>
+                Download
+            </a>
+            <a href="https://hanter-xd-official.github.io/TEMP-MAIL/" target="_blank" class="flex-1 bg-brand-500 text-white py-3 rounded-2xl font-bold text-center text-sm shadow-lg shadow-brand-500/20 flex items-center justify-center gap-2 hover:bg-brand-600 active:scale-95 transition-all">
+                <span class="material-symbols-rounded">language</span>
+                Website
+            </a>
+        </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div id="toast-container" class="fixed bottom-24 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 z-50 w-full px-4 pointer-events-none"></div>
+
+    <!-- ================= LOGIC ================= -->
+    <script>
+        const API_BASE = "https://api.mail.tm";
+        let appState = { email: null, password: null, token: null, messages: [], timer: 600, timerId: null };
+        
+        const el = {
+            loadingBar: document.getElementById('loading-bar'),
+            splash: document.getElementById('splash-screen'),
+            emailAddr: document.getElementById('email-address'),
+            timer: document.getElementById('timer-display'),
+            inboxList: document.getElementById('inbox-list'),
+            inboxCount: document.getElementById('inbox-count'),
+            composeView: document.getElementById('compose-view'),
+            viewPanel: document.getElementById('email-view')
+        };
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('dark');
+            setTimeout(() => { el.loadingBar.style.width = '50%'; }, 100);
+            await initApp();
+            setTimeout(() => { 
+                el.loadingBar.style.width = '100%';
+                setTimeout(() => { el.splash.style.opacity = '0'; setTimeout(() => el.splash.remove(), 500); }, 400);
+            }, 800);
+
+            document.getElementById('theme-toggle').addEventListener('click', () => {
+                document.documentElement.classList.toggle('dark');
+            });
+        });
+
+        async function initApp() {
+            startTimer();
+            await generateEmail();
+            setInterval(fetchMessages, 10000);
+        }
+
+        async function apiCall(endpoint, method = 'GET', body = null) {
+            const headers = { 'Content-Type': 'application/json' };
+            if (appState.token) headers['Authorization'] = `Bearer ${appState.token}`;
+            try {
+                const res = await fetch(`${API_BASE}${endpoint}`, { method, headers, body: body ? JSON.stringify(body) : null });
+                if (!res.ok) {
+                    if (res.status === 401) return 'UNAUTHORIZED';
+                    return null;
+                }
+                return await res.json();
+            } catch { return null; }
+        }
+
+        async function generateEmail() {
+            el.emailAddr.innerHTML = '<span class="animate-pulse">Generating...</span>';
+            const domains = await apiCall('/domains');
+            if (!domains) return showToast("Network Error", "error");
+            const domain = domains['hydra:member'][0].domain;
+            const user = Math.random().toString(36).substring(7);
+            const pass = Math.random().toString(36).substring(7);
+            const email = `${user}@${domain}`;
+            const acc = await apiCall('/accounts', 'POST', { address: email, password: pass });
+            if (acc) {
+                const tokenRes = await apiCall('/token', 'POST', { address: email, password: pass });
+                appState.email = email;
+                appState.password = pass;
+                appState.token = tokenRes.token;
+                el.emailAddr.innerText = email;
+                showToast("Email address ready", "success");
+                fetchMessages();
+                resetTimer();
+            }
+        }
+
+        async function fetchMessages() {
+            if (!appState.token) return;
+            const data = await apiCall('/messages');
+            if (data === 'UNAUTHORIZED') return generateEmail();
+            if (data && data['hydra:member']) {
+                if (data['hydra:member'].length > appState.messages.length) showToast("New mail received!", "success");
+                appState.messages = data['hydra:member'];
+                renderInbox();
+            }
+        }
+
+        function renderInbox() {
+            el.inboxCount.innerText = appState.messages.length;
+            el.inboxList.innerHTML = '';
+            if (appState.messages.length === 0) {
+                el.inboxList.innerHTML = `<li class="flex flex-col items-center justify-center py-10 text-center opacity-60"><span class="material-symbols-rounded text-4xl text-gray-300 mb-2">inbox</span><p class="text-sm text-gray-500">Inbox is empty</p></li>`;
+                return;
+            }
+            appState.messages.forEach(msg => {
+                const sender = msg.from.name || msg.from.address.split('@')[0];
+                const li = document.createElement('li');
+                li.className = "bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 active:scale-98 transition-transform cursor-pointer";
+                li.onclick = () => openMessage(msg.id, sender, msg.subject, msg.createdAt, sender[0]);
+                li.innerHTML = `
+                    <div class="flex gap-3">
+                        <div class="w-10 h-10 rounded-full bg-brand-100 dark:bg-brand-900/30 text-brand-600 dark:text-brand-300 flex items-center justify-center font-bold">${sender[0].toUpperCase()}</div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex justify-between items-baseline mb-1"><h3 class="font-bold text-gray-900 dark:text-white truncate text-sm">${sender}</h3><span class="text-[10px] text-gray-400">Now</span></div>
+                            <p class="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">${msg.subject || '(No Subject)'}</p>
+                        </div>
+                    </div>`;
+                el.inboxList.appendChild(li);
+            });
+        }
+
+        async function openMessage(id, sender, subject, date, avatar) {
+            document.getElementById('view-subject').innerText = subject;
+            document.getElementById('view-sender').innerText = sender;
+            document.getElementById('view-date').innerText = new Date(date).toLocaleString();
+            el.viewPanel.classList.remove('translate-x-full');
+            const fullMsg = await apiCall(`/messages/${id}`);
+            const html = fullMsg.html ? fullMsg.html[0] : fullMsg.text;
+            document.getElementById('view-frame').srcdoc = `<style>body{font-family:sans-serif;padding:20px;color:#333}</style>${html}`;
+        }
+
+        function openCompose() { el.composeView.classList.remove('translate-y-full'); }
+        function closeCompose() { el.composeView.classList.add('translate-y-full'); }
+        
+        // --- SEND MAIL LOGIC ---
+        async function sendEmail() {
+            const to = document.getElementById('compose-to').value;
+            const subject = document.getElementById('compose-subject').value;
+            const body = document.getElementById('compose-body').value;
+            const btn = document.getElementById('btn-send');
+            
+            if (!to || !subject || !body) return showToast("Please fill all fields", "warning");
+
+            // UI Feedback
+            btn.innerText = "Processing...";
+            btn.disabled = true;
+            btn.classList.add('opacity-50');
+
+            // Actual API Call
+            const res = await apiCall('/messages', 'POST', {
+                from: { address: appState.email, name: "Temp User" },
+                to: [{ address: to, name: "" }],
+                subject: subject,
+                html: body
+            });
+
+            // Restore Button
+            btn.innerText = "Send";
+            btn.disabled = false;
+            btn.classList.remove('opacity-50');
+
+            if (res && res.id) {
+                showToast("Email Sent Successfully!", "success");
+                closeCompose();
+                document.getElementById('compose-to').value = '';
+                document.getElementById('compose-body').value = '';
+                document.getElementById('compose-subject').value = '';
+            } else {
+                console.warn("Send failed. Likely API restriction.");
+                showToast("Failed. Server rejected external mail.", "error");
+            }
+        }
+
+        function closeEmailView() { el.viewPanel.classList.add('translate-x-full'); }
+        function copyToClipboard() { navigator.clipboard.writeText(appState.email).then(() => showToast("Copied!", "success")); }
+        function refreshInbox() { fetchMessages(); showToast("Refreshed", "info"); }
+        function generateNewEmailWithConfirm() { if(confirm("Change email?")) generateEmail(); }
+        function deleteEmail() { if(confirm("Delete email?")) generateEmail(); }
+
+        function startTimer() {
+            if (appState.timerId) clearInterval(appState.timerId);
+            appState.timerId = setInterval(() => {
+                appState.timer--;
+                const m = Math.floor(appState.timer / 60);
+                const s = appState.timer % 60;
+                el.timer.innerText = `${m}:${s < 10 ? '0'+s : s}`;
+                if (appState.timer <= 0) { el.timer.classList.add('text-red-500'); showToast("Time expired", "warning"); clearInterval(appState.timerId); }
+            }, 1000);
+        }
+        function resetTimer() { appState.timer = 600; el.timer.classList.remove('text-red-500'); startTimer(); }
+        function extendTimer() { resetTimer(); showToast("Extended +10m", "success"); }
+
+        function showToast(msg, type) {
+            const container = document.getElementById('toast-container');
+            const div = document.createElement('div');
+            const colors = { success: 'bg-green-500', error: 'bg-red-500', warning: 'bg-yellow-500', info: 'bg-gray-800' };
+            div.className = `${colors[type]} text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-2 text-sm toast-enter`;
+            div.innerHTML = `<span>${msg}</span>`;
+            container.appendChild(div);
+            requestAnimationFrame(() => { div.classList.remove('toast-enter'); div.classList.add('toast-enter-active'); });
+            setTimeout(() => { div.classList.remove('toast-enter-active'); div.classList.add('toast-exit-active'); setTimeout(() => div.remove(), 300); }, 3000);
+        }
+    </script>
+</body>
+</html>
