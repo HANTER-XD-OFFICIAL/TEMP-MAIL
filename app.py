@@ -8,11 +8,10 @@ from threading import Thread
 from telebot import types
 
 # --- Configuration ---
-# Your correct Token and IDs
-TOKEN = '8821453331:AAGG0KnJNrDT-nyKMAaa2xpa_lrp90nbK-I'
-ADMIN_ID = "HANTER_XD_OFFICIAL" 
-PORTFOLIO_LINK = "https://hanter-xd-official.github.io/PORTFOLIO/"
+# Using the token you provided earlier
+TOKEN = '8821453331:AAHA_14xkD-f_OjvCUlY5CQ5iVYxIENBPB4'
 DEV_LINK = "https://t.me/HANTER_XD_OFFICIAL"
+PORTFOLIO_LINK = "https://hanter-xd-official.github.io/PORTFOLIO/"
 API_BASE = "https://api.mail.tm"
 
 app = Flask(__name__)
@@ -55,7 +54,6 @@ def process_gen_mail(chat_id):
             f"✨ *Your Temp Mail is Ready!*\n\n"
             f"📧 *Address:* `{email}`\n"
             f"🔑 *Password:* `{password}`\n\n"
-            f"🛡️ *Security:* This mailbox is private and secure.\n"
             f"━━━━━━━━━━━━━━━━━━━━━\n"
             f"👤 *Developer:* [HANTER_XD_OFFICIAL]({DEV_LINK})"
         )
@@ -70,7 +68,6 @@ def process_gen_mail(chat_id):
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-    # Using Markdown link for Developer to ensure full username shows up and is clickable
     welcome_text = (
         f"🌟 *Hi {message.from_user.first_name}! Welcome to Temp Mail Pro*\n\n"
         f"🔐 *Protect your privacy* by using a disposable email address for social media, "
@@ -82,27 +79,21 @@ def send_welcome(message):
         f"👇 *Use the buttons below to manage your mail:*"
     )
     
-    # Inline Buttons (Message Buttons)
     inline_markup = types.InlineKeyboardMarkup(row_width=2)
     btn_gen = types.InlineKeyboardButton("📧 Generate Mail", callback_data="gen_mail")
     btn_web = types.InlineKeyboardButton("🌐 Visit Website", url=PORTFOLIO_LINK)
     btn_sup = types.InlineKeyboardButton("📢 Support", url=DEV_LINK)
-    
     inline_markup.add(btn_gen)
     inline_markup.add(btn_web, btn_sup)
 
-    # Reply Keyboard (Bottom Permanent Buttons)
     reply_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    reply_markup.add("📧 Generate Email", "📥 Check Inbox")
+    reply_markup.add("🗂️ LIVE GENERATE MAIL ⚡📢", "📥 Check Inbox")
 
     bot.send_message(message.chat.id, welcome_text, parse_mode="Markdown", reply_markup=inline_markup, disable_web_page_preview=True)
     bot.send_message(message.chat.id, "💡 *Quick Access Menu Enabled*", parse_mode="Markdown", reply_markup=reply_markup)
 
-# --- Keyboard Message Handlers ---
-
-@bot.message_handler(func=lambda message: message.text == "📧 Generate Email")
-def handle_gen_mail_msg(message):
-    bot.send_message(message.chat.id, "⏳ *Generating your email...*", parse_mode="Markdown")
+@bot.message_handler(func=lambda m: m.text == "🗂️ LIVE GENERATE MAIL ⚡📢")
+def handle_reply_gen(message):
     process_gen_mail(message.chat.id)
 
 @bot.message_handler(func=lambda message: message.text == "📥 Check Inbox")
@@ -111,56 +102,35 @@ def handle_check_inbox_msg(message):
     if not user:
         bot.reply_to(message, "⚠️ Please generate an email first!")
         return
-    
-    bot.send_message(message.chat.id, "📥 *Checking for new messages...*", parse_mode="Markdown")
     msgs = get_messages(user['token'])
     if not msgs:
         bot.send_message(message.chat.id, "📭 *Inbox is empty.*", parse_mode="Markdown")
     else:
-        for m in msgs[:3]:
-            sender = m['from']['address']
-            subject = m['subject'] or "No Subject"
-            bot.send_message(message.chat.id, f"📩 *From:* {sender}\n📝 *Subject:* {subject}\n\n_Use refresh button for full content._", parse_mode="Markdown")
-
-# --- Callback Handlers (Inline Buttons) ---
+        bot.send_message(message.chat.id, "📥 *New messages found!*", parse_mode="Markdown")
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_query(call):
     if call.data == "gen_mail":
         bot.answer_callback_query(call.id, "Generating...")
         process_gen_mail(call.message.chat.id)
-        
     elif call.data == "refresh_inbox":
         user = user_data.get(call.message.chat.id)
         if not user:
             bot.answer_callback_query(call.id, "Session Expired!", show_alert=True)
             return
-        
-        bot.answer_callback_query(call.id, "Checking...")
         msgs = get_messages(user['token'])
         if not msgs:
-            bot.send_message(call.message.chat.id, "📭 *Inbox is still empty.*", parse_mode="Markdown")
+            bot.answer_callback_query(call.id, "📭 Still Empty", show_alert=True)
         else:
             for m in msgs[:3]:
-                sender = m['from']['address']
-                subject = m['subject'] or "No Subject"
-                # Fetching full message details
                 headers = {"Authorization": f"Bearer {user['token']}"}
-                m_id = m['id']
-                m_detail = requests.get(f"{API_BASE}/messages/{m_id}", headers=headers).json()
-                
-                inbox_msg = (
-                    f"📩 *New Mail Received!*\n\n"
-                    f"*From:* {sender}\n"
-                    f"*Subject:* {subject}\n\n"
-                    f"*Content:*\n{m_detail.get('text', 'No content available')[:500]}"
-                )
-                bot.send_message(call.message.chat.id, inbox_msg, parse_mode="Markdown")
+                m_detail = requests.get(f"{API_BASE}/messages/{m['id']}", headers=headers).json()
+                bot.send_message(call.message.chat.id, f"📩 *From:* {m['from']['address']}\n📝 *Subject:* {m['subject']}\n\n{m_detail.get('text', '')[:500]}", parse_mode="Markdown")
 
-# --- Web Server (Flask) ---
+# --- Web Server ---
 @app.route('/')
 def index():
-    return "Temp Mail Pro Bot is Live!"
+    return "Bot is Live!"
 
 def run_flask():
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
@@ -168,5 +138,4 @@ def run_flask():
 if __name__ == "__main__":
     t = Thread(target=run_flask)
     t.start()
-    print(f"Bot started successfully by @{ADMIN_ID}")
-    bot.infinity_polling(timeout=10, long_polling_timeout=5)
+    bot.infinity_polling()
