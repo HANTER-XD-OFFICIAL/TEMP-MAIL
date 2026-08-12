@@ -5,19 +5,20 @@ import string
 import telebot
 from flask import Flask, render_template
 from threading import Thread
+from telebot import types
 
 # --- কনফিগারেশন ---
 TOKEN = '8821453331:AAGG0KnJNrDT-nyKMAaa2xpa_lrp90nbK-I'
+ADMIN_ID = "HANTER_XD_OFFICIAL" # আপনার আইডি
 API_BASE = "https://api.mail.tm"
 
 app = Flask(__name__)
 bot = telebot.TeleBot(TOKEN)
 
-# ইউজার ডেটা স্টোর করার জন্য (সেশন অনুযায়ী)
+# সেশন স্টোরেজ
 user_data = {}
 
 def generate_account():
-    """mail.tm থেকে নতুন অ্যাকাউন্ট তৈরি করে"""
     try:
         domains = requests.get(f"{API_BASE}/domains").json()
         domain = domains['hydra:member'][0]['domain']
@@ -34,68 +35,93 @@ def generate_account():
         return None, None, None
 
 def get_messages(token):
-    """ইনবক্স চেক করে"""
     headers = {"Authorization": f"Bearer {token}"}
-    res = requests.get(f"{API_BASE}/messages", headers=headers).json()
-    return res.get('hydra:member', [])
+    try:
+        res = requests.get(f"{API_BASE}/messages", headers=headers).json()
+        return res.get('hydra:member', [])
+    except:
+        return []
 
-# --- টেলিগ্রাম বোট কমান্ডস ---
+# --- বোট ফাংশনস ---
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-    welcome_text = (
-        "👋 *Temp Mail Pro তে স্বাগতম!*\n\n"
-        "নিচের বাটনগুলো ব্যবহার করে ইমেইল তৈরি এবং চেক করুন।"
+    # স্টার্ট মেসেজে আপনার নাম এবং ইউনিক ডিজাইন
+    welcome_msg = (
+        f"👋 *Hi {message.from_user.first_name}!*\n\n"
+        f"Welcome to *Temp Mail Pro Bot* 📧\n"
+        f"আপনার প্রাইভেসি রক্ষা করতে ডিসপোজেবল ইমেইল ব্যবহার করুন।\n\n"
+        f"🛠 *Developed by:* @{ADMIN_ID}\n"
+        f"✨ *Status:* Online & Fast"
     )
-    markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
-    markup.add("📧 Generate Email", "📥 Check Inbox")
-    bot.send_message(message.chat.id, welcome_text, parse_mode="Markdown", reply_markup=markup)
-
-@bot.message_handler(func=lambda message: message.text == "📧 Generate Email")
-def make_email(message):
-    bot.reply_to(message, "⏳ একটি নতুন ইমেইল তৈরি করা হচ্ছে...")
-    email, password, token = generate_account()
-    if email:
-        user_data[message.chat.id] = {'email': email, 'token': token}
-        response = (
-            f"✅ *আপনার ইমেইল তৈরি হয়েছে:*\n\n"
-            f"📧 *Address:* `{email}`\n"
-            f"🔑 *Password:* `{password}`\n\n"
-            f"এখন এই ইমেইলটি ব্যবহার করতে পারেন।"
-        )
-        bot.send_message(message.chat.id, response, parse_mode="Markdown")
-    else:
-        bot.send_message(message.chat.id, "❌ সমস্যা হয়েছে, আবার চেষ্টা করুন।")
-
-@bot.message_handler(func=lambda message: message.text == "📥 Check Inbox")
-def check_inbox(message):
-    user = user_data.get(message.chat.id)
-    if not user:
-        bot.reply_to(message, "⚠️ আগে একটি ইমেইল তৈরি করুন (Generate Email এ ক্লিক করুন)।")
-        return
     
-    msgs = get_messages(user['token'])
-    if not msgs:
-        bot.send_message(message.chat.id, "📭 ইনবক্স খালি।")
-    else:
-        for m in msgs[:5]: # সর্বশেষ ৫টি মেসেজ দেখাবে
-            sender = m['from']['address']
-            subject = m['subject'] if m['subject'] else "(No Subject)"
-            bot.send_message(message.chat.id, f"📩 *From:* {sender}\n📝 *Subject:* {subject}\n\nইনবক্সের বিস্তারিত আপনার ওয়েব লিংকে দেখুন।", parse_mode="Markdown")
+    markup = types.InlineKeyboardMarkup(row_width=2)
+    btn1 = types.InlineKeyboardButton("📧 Generate Mail", callback_data="gen_mail")
+    btn2 = types.InlineKeyboardButton("📢 Support", url=f"https://t.me/{ADMIN_ID}")
+    btn3 = types.InlineKeyboardButton("🌐 Visit Website", url="https://t.me/HANTER_XD_OFFICIAL") # আপনার চ্যানেল লিংক দিতে পারেন
+    markup.add(btn1)
+    markup.add(btn2, btn3)
 
-# --- ফ্লাস্ক ওয়েব সার্ভার (আপনার HTML দেখানোর জন্য) ---
+    # একটি সুন্দর ছবিসহ মেসেজ পাঠাতে চাইলে (অপশনাল)
+    # bot.send_photo(message.chat.id, "IMAGE_URL", caption=welcome_msg, parse_mode="Markdown", reply_markup=markup)
+    bot.send_message(message.chat.id, welcome_msg, parse_mode="Markdown", reply_markup=markup)
+
+@bot.callback_query_handler(func=lambda call: True)
+def callback_query(call):
+    if call.data == "gen_mail":
+        bot.answer_callback_query(call.id, "Generating...")
+        email, password, token = generate_account()
+        
+        if email:
+            user_data[call.message.chat.id] = {'email': email, 'token': token, 'pass': password}
+            
+            res_msg = (
+                f"📧 *Your Temp Email:*\n`{email}`\n\n"
+                f"🔑 *Password:* `{password}`\n\n"
+                f"⚠️ *Note:* এই ইমেইলটি সাময়িক সময়ের জন্য।\n"
+                f"--- ✨ Powered by @{ADMIN_ID} ---"
+            )
+            
+            markup = types.InlineKeyboardMarkup()
+            markup.add(types.InlineKeyboardButton("📥 Refresh Inbox", callback_data="refresh_inbox"))
+            markup.add(types.InlineKeyboardButton("🗑 Delete Mail", callback_data="gen_mail"))
+            
+            bot.edit_message_text(res_msg, call.message.chat.id, call.message.message_id, 
+                                 parse_mode="Markdown", reply_markup=markup)
+        else:
+            bot.send_message(call.message.chat.id, "❌ Error creating email. Try again.")
+
+    elif call.data == "refresh_inbox":
+        user = user_data.get(call.message.chat.id)
+        if not user:
+            bot.answer_callback_query(call.id, "No active session!")
+            return
+
+        bot.answer_callback_query(call.id, "Checking for new mails...")
+        msgs = get_messages(user['token'])
+        
+        if not msgs:
+            bot.send_message(call.message.chat.id, "📭 ইনবক্স এখনো খালি।")
+        else:
+            for m in msgs[:3]:
+                sender = m['from']['address']
+                subject = m['subject'] or "No Subject"
+                bot.send_message(call.message.chat.id, 
+                                f"📩 *New Mail!*\n\n*From:* {sender}\n*Subject:* {subject}\n\n"
+                                f"বিস্তারিত জানতে আমাদের ওয়েব লিংকে যান।", 
+                                parse_mode="Markdown")
+
+# --- ওয়েব সার্ভার ---
 
 @app.route('/')
 def index():
-    # templates ফোল্ডারের ভেতরে আপনার index.html থাকতে হবে
     return render_template('index.html')
 
 def run_flask():
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
 
 if __name__ == "__main__":
-    # বোট এবং ফ্লাস্ক একসাথে চালানোর জন্য
     t = Thread(target=run_flask)
     t.start()
-    print("Bot is starting...")
+    print(f"Bot started by @{ADMIN_ID}")
     bot.infinity_polling()
