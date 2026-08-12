@@ -62,7 +62,7 @@ def process_gen_mail(chat_id):
             f"📧 *Address:* `{email}`\n"
             f"🔑 *Password:* `{password}`\n\n"
             f"━━━━━━━━━━━━━━━━━━━━━\n"
-            f"👤 *Developer:* [HANTER_XD_OFFICIAL]({DEV_LINK})"
+            f"👤 *Developer:* [@HANTER_XD_OFFICIAL]({DEV_LINK})"
         )
         # Inline buttons for generated mail
         markup = types.InlineKeyboardMarkup(row_width=2)
@@ -83,7 +83,7 @@ def send_welcome(message):
         f"🔐 *Protect your privacy* by using a disposable email address for social media, "
         f"websites, and apps.\n\n"
         f"━━━━━━━━━━━━━━━━━━━━━\n"
-        f"👤 *Developer:* [HANTER_XD_OFFICIAL]({DEV_LINK})\n"
+        f"👤 *Developer:* [@HANTER_XD_OFFICIAL]({DEV_LINK})\n"
         f"🚀 *Status:* System Online ✅\n"
         f"━━━━━━━━━━━━━━━━━━━━━\n\n"
         f"👇 *Use the buttons below to manage your mail:*"
