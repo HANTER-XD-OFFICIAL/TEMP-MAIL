@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Temp Mail Pro - Ultimate</title>
+    <title>Temp Mail Pro - Anti-Block Edition</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
 
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -18,7 +19,7 @@
             theme: {
                 extend: {
                     fontFamily: { sans: ['Space Grotesk', 'sans-serif'] },
-                    colors: { brand: { 50: '#f5f3ff', 100: '#ede9fe', 500: '#8b5cf6', 600: '#7c3aed', 900: '#4c1d95' } }
+                    colors: { brand: { 500: '#8b5cf6', 600: '#7c3aed' } }
                 }
             }
         }
@@ -27,211 +28,258 @@
     <style>
         body { -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .loader-bar { width: 0%; height: 4px; background: linear-gradient(90deg, #8b5cf6, #ec4899); transition: width 0.2s ease; border-radius: 99px; }
-        .email-frame { width: 100%; height: 100%; border: none; display: block; }
-        .toast-enter { transform: translateY(100%); opacity: 0; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .toast-visible { transform: translateY(0); opacity: 1; }
+        .loader-bar { width: 0%; height: 4px; background: linear-gradient(90deg, #8b5cf6, #ec4899); transition: width 0.3s ease; border-radius: 99px; }
+        .email-frame { width: 100%; height: 100%; border: none; }
+        .pulse { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300 h-screen overflow-hidden flex flex-col relative">
+<body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 h-screen flex flex-col relative transition-colors duration-300">
 
     <!-- SPLASH SCREEN -->
     <div id="splash-screen" class="fixed inset-0 z-50 bg-white dark:bg-gray-900 flex flex-col items-center justify-center transition-opacity duration-500">
         <div class="text-center">
             <span class="material-symbols-rounded text-6xl text-brand-500 mb-4">mail</span>
-            <h1 class="text-3xl font-bold tracking-tight mb-1">Temp Mail</h1>
-            <p class="text-gray-500 text-sm mb-8" id="loading-text">Bypassing restrictions...</p>
-            <div class="w-48 h-1 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
+            <h1 class="text-3xl font-bold mb-1 tracking-tight">Temp Mail</h1>
+            <p class="text-gray-400 text-sm mb-8">Connecting Securely...</p>
+            <div class="w-48 h-1 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                 <div id="loading-bar" class="loader-bar"></div>
             </div>
         </div>
     </div>
 
     <!-- HEADER -->
-    <header class="flex-none px-5 py-4 flex items-center justify-between bg-white/80 dark:bg-gray-900/80 backdrop-blur-md sticky top-0 z-30 border-b border-gray-100 dark:border-gray-800">
+    <header class="p-4 flex items-center justify-between border-b border-gray-100 dark:border-gray-800 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md sticky top-0 z-30">
         <div class="flex items-center gap-2">
             <span class="material-symbols-rounded text-brand-500">mark_email_unread</span>
-            <span class="font-bold text-lg tracking-tight">Temp Mail</span>
+            <span class="font-bold text-lg">Temp Mail Pro</span>
         </div>
-        <button id="theme-toggle" class="p-2 rounded-full bg-gray-100 dark:bg-gray-800"><span class="material-symbols-rounded">dark_mode</span></button>
+        <button onclick="document.documentElement.classList.toggle('dark')" class="p-2 bg-gray-100 dark:bg-gray-800 rounded-full">
+            <span class="material-symbols-rounded">dark_mode</span>
+        </button>
     </header>
 
-    <main class="flex-1 overflow-y-auto no-scrollbar p-4 pb-32">
-        <!-- Control Card -->
-        <section class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 mb-6 relative overflow-hidden">
+    <!-- MAIN -->
+    <main class="flex-1 overflow-y-auto p-4 pb-32 no-scrollbar">
+        
+        <!-- EMAIL CARD -->
+        <section class="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 mb-6 relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-500 to-pink-500"></div>
-            <div class="flex justify-between items-center mb-2">
-                <span class="text-xs font-medium uppercase tracking-wider text-gray-400">Address Status</span>
-                <span id="timer-display" class="text-xs font-bold text-brand-500 bg-brand-50 dark:bg-brand-900/30 px-2 py-1 rounded-md">10:00</span>
+            
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Active Address</span>
+                <span id="timer-display" class="text-xs font-bold text-brand-500 bg-brand-50 dark:bg-brand-900/30 px-2 py-1 rounded-lg">10:00</span>
             </div>
-            <div class="relative mb-5">
-                <div id="email-address" class="text-lg font-bold break-all text-gray-900 dark:text-white">Connecting...</div>
-                <button onclick="copyToClipboard()" class="mt-3 w-full py-2.5 bg-brand-500 text-white rounded-xl font-medium flex items-center justify-center gap-2 active:scale-95 transition-all">
-                    <span class="material-symbols-rounded text-lg">content_copy</span> Copy Email
-                </button>
+
+            <div id="email-display" class="text-xl font-bold text-gray-900 dark:text-white break-all mb-6 min-h-[2rem] flex items-center">
+                <span class="pulse text-gray-300">Connecting to server...</span>
             </div>
-            <div class="grid grid-cols-3 gap-2">
-                <button onclick="generateEmail()" class="flex flex-col items-center p-3 rounded-xl bg-gray-50 dark:bg-gray-700/50">
-                    <span class="material-symbols-rounded text-blue-500">sync_alt</span><span class="text-[10px] font-bold">CHANGE</span>
+
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="copyEmail()" class="flex items-center justify-center gap-2 py-3.5 bg-brand-500 text-white rounded-2xl font-bold active:scale-95 transition-all shadow-lg shadow-brand-500/20">
+                    <span class="material-symbols-rounded text-lg">content_copy</span> Copy
                 </button>
-                <button onclick="extendTimer()" class="flex flex-col items-center p-3 rounded-xl bg-gray-50 dark:bg-gray-700/50">
-                    <span class="material-symbols-rounded text-orange-500">timer</span><span class="text-[10px] font-bold">EXTEND</span>
-                </button>
-                <button onclick="location.reload()" class="flex flex-col items-center p-3 rounded-xl bg-gray-50 dark:bg-gray-700/50">
-                    <span class="material-symbols-rounded text-red-500">refresh</span><span class="text-[10px] font-bold">RESET</span>
+                <button onclick="createNewEmail()" class="flex items-center justify-center gap-2 py-3.5 bg-gray-100 dark:bg-gray-700 rounded-2xl font-bold active:scale-95 transition-all">
+                    <span class="material-symbols-rounded text-lg">sync</span> New
                 </button>
             </div>
         </section>
 
-        <!-- Inbox -->
-        <div class="flex items-center justify-between mb-3 px-1">
-            <h2 class="text-lg font-bold">Inbox <span id="inbox-count" class="bg-gray-200 dark:bg-gray-700 text-xs px-2 py-0.5 rounded-full">0</span></h2>
-            <button onclick="fetchMessages()" class="p-2 text-gray-500"><span class="material-symbols-rounded">refresh</span></button>
+        <!-- INBOX SECTION -->
+        <div class="flex items-center justify-between mb-4 px-2">
+            <h2 class="font-bold text-lg flex items-center gap-2">Inbox <span id="inbox-count" class="text-xs bg-gray-200 dark:bg-gray-700 px-2 py-0.5 rounded-full">0</span></h2>
+            <button onclick="fetchMessages()" class="text-brand-500 text-sm font-bold flex items-center gap-1">
+                <span class="material-symbols-rounded text-sm">refresh</span> Refresh
+            </button>
         </div>
-        <ul id="inbox-list" class="space-y-3 mb-6">
-            <li class="flex flex-col items-center py-10 text-center opacity-60"><p class="text-sm">Inbox is empty</p></li>
+
+        <ul id="inbox-list" class="space-y-3">
+            <li class="py-12 text-center text-gray-400">
+                <span class="material-symbols-rounded text-4xl mb-2 opacity-20">mail_outline</span>
+                <p class="text-sm">No messages yet</p>
+            </li>
         </ul>
     </main>
 
-    <!-- EMAIL VIEWER -->
-    <div id="email-view" class="fixed inset-0 z-40 bg-white dark:bg-gray-900 transform translate-x-full transition-transform duration-300 flex flex-col">
-        <div class="px-5 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center gap-4">
-            <button onclick="closeEmailView()" class="p-2"><span class="material-symbols-rounded">arrow_back</span></button>
-            <h2 class="font-bold truncate">Message</h2>
+    <!-- FOOTER -->
+    <footer class="fixed bottom-0 left-0 w-full p-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-t border-gray-100 dark:border-gray-800 grid grid-cols-2 gap-3 z-30">
+        <a href="https://t.me/HANTER_XD_OFFICIAL" target="_blank" class="flex items-center justify-center gap-2 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-2xl font-bold text-xs">
+            <span class="material-symbols-rounded text-sm">support_agent</span> Support
+        </a>
+        <button onclick="createNewEmail()" class="flex items-center justify-center gap-2 py-3 bg-brand-500 text-white rounded-2xl font-bold text-xs shadow-lg shadow-brand-500/20">
+            <span class="material-symbols-rounded text-sm">add</span> Create New
+        </button>
+    </footer>
+
+    <!-- VIEW MODAL -->
+    <div id="view-modal" class="fixed inset-0 z-50 bg-white dark:bg-gray-900 transform translate-y-full transition-transform duration-300 flex flex-col">
+        <div class="p-4 border-b dark:border-gray-800 flex items-center justify-between">
+            <button onclick="closeModal()" class="p-2 bg-gray-100 dark:bg-gray-800 rounded-full"><span class="material-symbols-rounded">close</span></button>
+            <span class="font-bold">Email Content</span>
+            <div class="w-10"></div>
         </div>
-        <iframe id="view-frame" class="flex-1 w-full" sandbox="allow-popups"></iframe>
+        <div id="email-meta" class="p-4 bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700"></div>
+        <iframe id="email-frame" class="flex-1 w-full bg-white"></iframe>
     </div>
 
     <!-- TOAST -->
-    <div id="toast-container" class="fixed bottom-24 left-0 right-0 flex flex-col items-center gap-2 z-50 px-4 pointer-events-none"></div>
+    <div id="toast" class="fixed top-24 left-1/2 -translate-x-1/2 z-[60] px-6 py-3 bg-gray-800 text-white rounded-full text-xs font-bold shadow-2xl opacity-0 pointer-events-none transition-all duration-300"></div>
 
     <script>
-        const API_BASE = "https://api.mail.gw";
+        const API_URL = "https://api.mail.gw";
         const PROXIES = [
+            "", // সরাসরি চেষ্টা
             "https://corsproxy.io/?", 
-            "https://api.allorigins.win/raw?url=",
-            "https://thingproxy.freeboard.io/fetch/"
+            "https://api.allorigins.win/raw?url="
         ];
-        let currentProxyIdx = 0;
-        let appState = { email: null, password: null, token: null, messages: [], timer: 600 };
+        
+        let state = { email: '', pass: '', token: '', messages: [], timer: 600, activeProxy: 0 };
 
-        async function secureFetch(endpoint, options = {}) {
-            const url = API_BASE + endpoint;
+        // সলিড রিকোয়েস্ট ফাংশন (প্রক্সি সহ)
+        async function fetchAPI(path, options = {}) {
+            const url = API_URL + path;
             const headers = { 'Content-Type': 'application/json', ...options.headers };
-            if (appState.token) headers['Authorization'] = `Bearer ${appState.token}`;
+            if (state.token) headers['Authorization'] = `Bearer ${state.token}`;
 
-            // Try Direct first, then cycle through proxies
-            for (let i = -1; i < PROXIES.length; i++) {
+            for (let i = 0; i < PROXIES.length; i++) {
                 try {
-                    const finalUrl = i === -1 ? url : PROXIES[i] + encodeURIComponent(url);
-                    const res = await fetch(finalUrl, { 
-                        method: options.method || 'GET', 
-                        headers, 
-                        body: options.body,
+                    const finalUrl = PROXIES[i] + encodeURIComponent(url);
+                    const res = await fetch(PROXIES[i] === "" ? url : finalUrl, { 
+                        ...options, 
+                        headers,
                         mode: 'cors'
                     });
+                    
                     if (res.ok) return await res.json();
-                    if (res.status === 401) return 'UNAUTHORIZED';
+                    if (res.status === 401) return { error: 'AUTH' };
                 } catch (e) {
-                    console.warn(`Attempt ${i+2} failed...`);
+                    console.log(`Proxy ${i} failed, trying next...`);
                 }
             }
-            return null;
+            return { error: 'BLOCK' };
         }
 
-        async function generateEmail() {
-            document.getElementById('email-address').innerText = "Connecting...";
-            const domains = await secureFetch('/domains');
-            if (!domains || !domains['hydra:member']) {
-                showToast("Network Error: All proxies failed", "error");
-                document.getElementById('email-address').innerText = "Retry connection";
+        async function createNewEmail() {
+            const display = document.getElementById('email-display');
+            display.innerHTML = '<span class="pulse text-brand-500">Bypassing Network...</span>';
+
+            const domains = await fetchAPI('/domains');
+            if (domains.error) {
+                display.innerHTML = '<span class="text-red-500 text-xs font-bold uppercase">Network Error: Use VPN or Try Again</span>';
                 return;
             }
 
             const domain = domains['hydra:member'][0].domain;
             const user = Math.random().toString(36).substring(2, 10);
             const pass = Math.random().toString(36).substring(2, 12);
-            const email = `${user}@${domain}`;
+            const address = `${user}@${domain}`;
 
-            const acc = await secureFetch('/accounts', { 
+            const acc = await fetchAPI('/accounts', { 
                 method: 'POST', 
-                body: JSON.stringify({ address: email, password: pass }) 
+                body: JSON.stringify({ address, password: pass }) 
             });
 
-            if (acc) {
-                const tokenRes = await secureFetch('/token', { 
-                    method: 'POST', 
-                    body: JSON.stringify({ address: email, password: pass }) 
-                });
-                if (tokenRes && tokenRes.token) {
-                    appState.email = email; appState.token = tokenRes.token;
-                    document.getElementById('email-address').innerText = email;
-                    showToast("Email Active", "success");
-                    fetchMessages();
-                }
+            if (acc.error) return createNewEmail();
+
+            const token = await fetchAPI('/token', { 
+                method: 'POST', 
+                body: JSON.stringify({ address, password: pass }) 
+            });
+
+            if (token.token) {
+                state.email = address; state.token = token.token;
+                display.innerText = address;
+                showToast("New Email Generated!");
+                state.timer = 600;
+                fetchMessages();
             }
         }
 
         async function fetchMessages() {
-            if (!appState.token) return;
-            const data = await secureFetch('/messages');
-            if (data === 'UNAUTHORIZED') return generateEmail();
-            if (data && data['hydra:member']) {
-                appState.messages = data['hydra:member'];
+            if (!state.token) return;
+            const data = await fetchAPI('/messages');
+            if (data.error === 'AUTH') return createNewEmail();
+            if (data['hydra:member']) {
+                if (data['hydra:member'].length > state.messages.length) showToast("New Email Received!");
+                state.messages = data['hydra:member'];
                 renderInbox();
             }
         }
 
         function renderInbox() {
             const list = document.getElementById('inbox-list');
-            document.getElementById('inbox-count').innerText = appState.messages.length;
-            list.innerHTML = appState.messages.length ? '' : '<li class="text-center py-10 opacity-60">Inbox is empty</li>';
-            appState.messages.forEach(msg => {
+            document.getElementById('inbox-count').innerText = state.messages.length;
+            
+            if (state.messages.length === 0) {
+                list.innerHTML = `<li class="py-12 text-center text-gray-400"><p class="text-sm">Inbox is empty</p></li>`;
+                return;
+            }
+
+            list.innerHTML = '';
+            state.messages.forEach(msg => {
                 const li = document.createElement('li');
-                li.className = "bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 cursor-pointer";
-                li.onclick = async () => {
-                    const full = await secureFetch(`/messages/${msg.id}`);
-                    document.getElementById('view-frame').srcdoc = full.html ? full.html[0] : full.text;
-                    document.getElementById('email-view').classList.remove('translate-x-full');
-                };
-                li.innerHTML = `<div class="font-bold text-sm">${msg.from.address}</div><div class="text-xs opacity-70 truncate">${msg.subject}</div>`;
+                li.className = "bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 cursor-pointer active:scale-95 transition-all";
+                li.onclick = () => openEmail(msg.id, msg.from.address, msg.subject);
+                li.innerHTML = `
+                    <div class="flex justify-between items-start mb-1">
+                        <span class="font-bold text-sm text-brand-500 truncate mr-4">${msg.from.address}</span>
+                        <span class="text-[10px] text-gray-400 whitespace-nowrap">Just now</span>
+                    </div>
+                    <p class="text-xs font-medium text-gray-600 dark:text-gray-300 truncate">${msg.subject || '(No Subject)'}</p>
+                `;
                 list.appendChild(li);
             });
         }
 
-        function showToast(msg, type) {
-            const container = document.getElementById('toast-container');
-            const div = document.createElement('div');
-            const bg = type === 'success' ? 'bg-green-500' : 'bg-red-500';
-            div.className = `${bg} text-white px-6 py-3 rounded-2xl shadow-xl toast-enter`;
-            div.innerText = msg;
-            container.appendChild(div);
-            setTimeout(() => div.classList.add('toast-visible'), 10);
-            setTimeout(() => { div.classList.remove('toast-visible'); setTimeout(() => div.remove(), 300); }, 3000);
+        async function openEmail(id, from, subject) {
+            document.getElementById('email-meta').innerHTML = `
+                <div class="text-[10px] font-bold text-brand-500 mb-1">FROM: ${from}</div>
+                <div class="text-sm font-bold">${subject}</div>
+            `;
+            document.getElementById('view-modal').classList.remove('translate-y-full');
+            const data = await fetchAPI(`/messages/${id}`);
+            const content = data.html ? data.html[0] : data.text;
+            document.getElementById('email-frame').srcdoc = `
+                <style>body{font-family:sans-serif;padding:20px;line-height:1.6;color:#333}img{max-width:100%}</style>
+                ${content}
+            `;
         }
 
-        function startTimer() {
-            setInterval(() => {
-                appState.timer--;
-                const m = Math.floor(appState.timer / 60), s = appState.timer % 60;
+        function closeModal() { document.getElementById('view-modal').classList.add('translate-y-full'); }
+        
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.style.opacity = '1';
+            setTimeout(() => t.style.opacity = '0', 2500);
+        }
+
+        function copyEmail() {
+            if (!state.email) return;
+            navigator.clipboard.writeText(state.email);
+            showToast("Copied to clipboard!");
+        }
+
+        // TIMER
+        setInterval(() => {
+            if (state.timer > 0) {
+                state.timer--;
+                const m = Math.floor(state.timer / 60);
+                const s = state.timer % 60;
                 document.getElementById('timer-display').innerText = `${m}:${s < 10 ? '0'+s : s}`;
-            }, 1000);
-        }
+            }
+        }, 1000);
 
-        window.addEventListener('DOMContentLoaded', () => {
+        // INIT
+        window.onload = () => {
             document.getElementById('loading-bar').style.width = '100%';
             setTimeout(() => {
                 document.getElementById('splash-screen').style.opacity = '0';
                 setTimeout(() => document.getElementById('splash-screen').remove(), 500);
+                createNewEmail();
+                setInterval(fetchMessages, 10000);
             }, 1000);
-            generateEmail(); startTimer();
-            setInterval(fetchMessages, 10000);
-            document.getElementById('theme-toggle').onclick = () => document.documentElement.classList.toggle('dark');
-        });
-
-        function closeEmailView() { document.getElementById('email-view').classList.add('translate-x-full'); }
-        function copyToClipboard() { navigator.clipboard.writeText(appState.email).then(() => showToast("Copied!", "success")); }
-        function extendTimer() { appState.timer = 600; showToast("Timer Reset", "success"); }
+        };
     </script>
 </body>
 </html>
