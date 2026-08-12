@@ -63,7 +63,7 @@ def process_gen_mail(chat_id):
             f"🔑 *Password:* `{password}`\n\n"
             f"🛡️ *Security:* This mailbox is private and secure.\n"
             f"━━━━━━━━━━━━━━━━━━━━━\n"
-            f"👤 *Developer:* @{ADMIN_ID}"
+            f"👤 *Developer:* @HANTER_XD_OFFICIAL"
         )
         markup = types.InlineKeyboardMarkup()
         markup.add(types.InlineKeyboardButton("📥 Refresh Inbox", callback_data="refresh_inbox"))
@@ -81,7 +81,7 @@ def send_welcome(message):
         f"🔐 *Protect your privacy* by using a disposable email address for social media, "
         f"websites, and apps.\n\n"
         f"━━━━━━━━━━━━━━━━━━\n"
-        f"👤 *Developer:* @{ADMIN_ID}\n"
+        f"👤 *Developer:* @HANTER_XD_OFFICIAL\n"
         f"🚀 *Status:* System Online ✅\n"
         f"━━━━━━━━━━━━━━━━━━\n\n"
         f"👇 *Use the buttons below to manage your mail:*"
@@ -91,7 +91,7 @@ def send_welcome(message):
     inline_markup = types.InlineKeyboardMarkup(row_width=2)
     btn_gen = types.InlineKeyboardButton("📧 Generate Mail", callback_data="gen_mail")
     btn_web = types.InlineKeyboardButton("🌐 Visit Website", url=PORTFOLIO_LINK)
-    btn_sup = types.InlineKeyboardButton("📢 Support", url=f"https://t.me/{ADMIN_ID}")
+    btn_sup = types.InlineKeyboardButton("📢 Support", url=f"https://t.me/HANTER_XD_OFFICIAL")
     
     inline_markup.add(btn_gen)
     inline_markup.add(btn_web, btn_sup)
@@ -155,7 +155,7 @@ if __name__ == "__main__":
     # Start Flask server in a background thread
     t = Thread(target=run_flask)
     t.start()
-    print(f"Bot started successfully by @{ADMIN_ID}")
+    print(f"Bot started successfully by @HANTER_XD_OFFICIAL")
     
     # Start Telegram Bot polling
     bot.infinity_polling()
