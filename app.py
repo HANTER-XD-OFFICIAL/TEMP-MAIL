@@ -7,7 +7,7 @@ from flask import Flask, render_template
 from threading import Thread
 from telebot import types
 
-# --- কনফিগারেশন ---
+# --- Configuration ---
 TOKEN = '8821453331:AAGG0KnJNrDT-nyKMAaa2xpa_lrp90nbK-I'
 ADMIN_ID = "HANTER_XD_OFFICIAL" 
 PORTFOLIO_LINK = "https://hanter-xd-official.github.io/PORTFOLIO/"
@@ -16,7 +16,7 @@ API_BASE = "https://api.mail.tm"
 app = Flask(__name__)
 bot = telebot.TeleBot(TOKEN)
 
-# সেশন স্টোরেজ
+# Session Storage
 user_data = {}
 
 def generate_account():
@@ -43,31 +43,30 @@ def get_messages(token):
     except:
         return []
 
-# --- ইমেইল জেনারেট করার ফাংশন ---
+# --- Email Generation Helper ---
 def process_gen_mail(chat_id):
     email, password, token = generate_account()
     if email:
         user_data[chat_id] = {'email': email, 'token': token, 'pass': password}
         res_msg = (
-            f"✨ *Your Professional Temp Mail is Ready!*\n\n"
-            f"📧 *Email:* `{email}`\n"
+            f"✨ *Your Temp Mail is Ready!*\n\n"
+            f"📧 *Address:* `{email}`\n"
             f"🔑 *Password:* `{password}`\n\n"
-            f"🛡️ *Security:* This email is private and temporary.\n"
+            f"🛡️ *Security:* This mailbox is private and secure.\n"
             f"━━━━━━━━━━━━━━━━━━━━━\n"
-            f"👤 *Owner:* @{ADMIN_ID}"
+            f"👤 *Developer:* @{ADMIN_ID}"
         )
         markup = types.InlineKeyboardMarkup()
         markup.add(types.InlineKeyboardButton("📥 Refresh Inbox", callback_data="refresh_inbox"))
         markup.add(types.InlineKeyboardButton("🔄 Generate New", callback_data="gen_mail"))
         bot.send_message(chat_id, res_msg, parse_mode="Markdown", reply_markup=markup)
     else:
-        bot.send_message(chat_id, "❌ Something went wrong. Try again.")
+        bot.send_message(chat_id, "❌ Error creating email. Please try again.")
 
-# --- প্রফেশনাল স্টার্ট হ্যান্ডলার ---
+# --- Professional Start Handler ---
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-    # সুন্দর করে সাজানো ওয়েলকাম টেক্সট
     welcome_text = (
         f"🌟 *Hi {message.from_user.first_name}! Welcome to Temp Mail Pro*\n\n"
         f"🔐 *Protect your privacy* by using a disposable email address for social media, "
@@ -76,29 +75,26 @@ def send_welcome(message):
         f"👤 *Developer:* @{ADMIN_ID}\n"
         f"🚀 *Status:* System Online ✅\n"
         f"━━━━━━━━━━━━━━━━━━\n\n"
-        f"👇 *নিচের বাটন থেকে আপনার ইমেইল তৈরি করুন:*"
+        f"👇 *Use the buttons below to manage your mail:*"
     )
     
-    # Inline Buttons (মেসেজের সাথে থাকা বাটন)
+    # Inline Buttons
     inline_markup = types.InlineKeyboardMarkup(row_width=2)
     btn_gen = types.InlineKeyboardButton("📧 Generate Mail", callback_data="gen_mail")
     btn_web = types.InlineKeyboardButton("🌐 Visit Website", url=PORTFOLIO_LINK)
     btn_sup = types.InlineKeyboardButton("📢 Support", url=f"https://t.me/{ADMIN_ID}")
     
-    # বাটনগুলো সাজানো
-    inline_markup.add(btn_gen) # এটি একাই এক লাইনে থাকবে
-    inline_markup.add(btn_web, btn_sup) # এই দুটি পাশাপাশি থাকবে
+    inline_markup.add(btn_gen)
+    inline_markup.add(btn_web, btn_sup)
 
-    # Reply Keyboard (নিচের স্থায়ী বাটন)
+    # Reply Keyboard (Bottom Permanent Buttons)
     reply_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     reply_markup.add("📧 Generate Email", "📥 Check Inbox")
 
-    # একটি মেসেজেই সবকিছু পাঠানো
     bot.send_message(message.chat.id, welcome_text, parse_mode="Markdown", reply_markup=inline_markup)
-    # রিপ্লাই কিবোর্ডটি অটোমেটিক সেট হয়ে যাবে
-    bot.send_message(message.chat.id, "💡 *Quick Access Activated*", parse_mode="Markdown", reply_markup=reply_markup)
+    bot.send_message(message.chat.id, "💡 *Quick Access Menu Enabled*", parse_mode="Markdown", reply_markup=reply_markup)
 
-# --- কিবোর্ড মেসেজ হ্যান্ডলার ---
+# --- Keyboard Message Handlers ---
 
 @bot.message_handler(func=lambda message: message.text == "📧 Generate Email")
 def handle_gen_mail_msg(message):
@@ -112,17 +108,17 @@ def handle_check_inbox_msg(message):
         bot.reply_to(message, "⚠️ Please generate an email first!")
         return
     
-    bot.send_message(message.chat.id, "📥 *Checking inbox for new messages...*", parse_mode="Markdown")
+    bot.send_message(message.chat.id, "📥 *Checking for new messages...*", parse_mode="Markdown")
     msgs = get_messages(user['token'])
     if not msgs:
-        bot.send_message(message.chat.id, "📭 ইনবক্স এখনো খালি।")
+        bot.send_message(message.chat.id, "📭 *Inbox is empty.*", parse_mode="Markdown")
     else:
         for m in msgs[:3]:
             sender = m['from']['address']
             subject = m['subject'] or "No Subject"
-            bot.send_message(message.chat.id, f"📩 *From:* {sender}\n📝 *Subject:* {subject}", parse_mode="Markdown")
+            bot.send_message(message.chat.id, f"📩 *From:* {sender}\n📝 *Subject:* {subject}\n\n_Check your web dashboard for full content._", parse_mode="Markdown")
 
-# --- কলব্যাক হ্যান্ডলার ---
+# --- Callback Handlers (Inline Buttons) ---
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_query(call):
@@ -139,14 +135,14 @@ def callback_query(call):
         bot.answer_callback_query(call.id, "Checking...")
         msgs = get_messages(user['token'])
         if not msgs:
-            bot.send_message(call.message.chat.id, "📭 ইনবক্স এখনো খালি।")
+            bot.send_message(call.message.chat.id, "📭 *Inbox is still empty.*", parse_mode="Markdown")
         else:
             for m in msgs[:3]:
                 sender = m['from']['address']
                 subject = m['subject'] or "No Subject"
-                bot.send_message(call.message.chat.id, f"📩 *New Mail!*\nFrom: {sender}\nSubject: {subject}", parse_mode="Markdown")
+                bot.send_message(call.message.chat.id, f"📩 *New Mail Received!*\n\n*From:* {sender}\n*Subject:* {subject}", parse_mode="Markdown")
 
-# --- ওয়েব সার্ভার ---
+# --- Web Server (Flask) ---
 @app.route('/')
 def index():
     return render_template('index.html')
