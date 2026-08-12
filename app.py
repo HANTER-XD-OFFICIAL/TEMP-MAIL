@@ -3,7 +3,7 @@ import requests
 import random
 import string
 import telebot
-from flask import Flask, render_template
+from flask import Flask
 from threading import Thread
 from telebot import types
 
@@ -18,6 +18,15 @@ bot = telebot.TeleBot(TOKEN)
 
 # Session Storage
 user_data = {}
+
+# --- Web Server (Flask) for 24/7 Uptime ---
+@app.route('/')
+def index():
+    return "Bot is running and alive! ✅"
+
+def run_flask():
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
 
 def generate_account():
     try:
@@ -142,16 +151,11 @@ def callback_query(call):
                 subject = m['subject'] or "No Subject"
                 bot.send_message(call.message.chat.id, f"📩 *New Mail Received!*\n\n*From:* {sender}\n*Subject:* {subject}", parse_mode="Markdown")
 
-# --- Web Server (Flask) ---
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-def run_flask():
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
-
 if __name__ == "__main__":
+    # Start Flask server in a background thread
     t = Thread(target=run_flask)
     t.start()
     print(f"Bot started successfully by @{ADMIN_ID}")
+    
+    # Start Telegram Bot polling
     bot.infinity_polling()
