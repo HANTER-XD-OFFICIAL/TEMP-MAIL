@@ -8,7 +8,6 @@ from threading import Thread
 from telebot import types
 
 # --- Configuration ---
-# Using the token you provided earlier
 TOKEN = '8821453331:AAHA_14xkD-f_OjvCUlY5CQ5iVYxIENBPB4'
 DEV_LINK = "https://t.me/HANTER_XD_OFFICIAL"
 PORTFOLIO_LINK = "https://hanter-xd-official.github.io/PORTFOLIO/"
@@ -17,10 +16,9 @@ API_BASE = "https://api.mail.tm"
 app = Flask(__name__)
 bot = telebot.TeleBot(TOKEN)
 
-# Session Storage
 user_data = {}
 
-# --- Mail.tm API Helper ---
+# --- API Helper ---
 def generate_account():
     try:
         domains = requests.get(f"{API_BASE}/domains").json()
@@ -45,7 +43,7 @@ def get_messages(token):
     except:
         return []
 
-# --- Email Generation Helper ---
+# --- Generation Logic ---
 def process_gen_mail(chat_id):
     email, password, token = generate_account()
     if email:
@@ -57,14 +55,16 @@ def process_gen_mail(chat_id):
             f"━━━━━━━━━━━━━━━━━━━━━\n"
             f"👤 *Developer:* [HANTER_XD_OFFICIAL]({DEV_LINK})"
         )
-        markup = types.InlineKeyboardMarkup()
-        markup.add(types.InlineKeyboardButton("📥 Refresh Inbox", callback_data="refresh_inbox"))
-        markup.add(types.InlineKeyboardButton("🔄 Generate New", callback_data="gen_mail"))
+        markup = types.InlineKeyboardMarkup(row_width=1)
+        markup.add(
+            types.InlineKeyboardButton("📥 Refresh Inbox", callback_data="refresh_inbox"),
+            types.InlineKeyboardButton("🔄 Generate New", callback_data="gen_mail")
+        )
         bot.send_message(chat_id, res_msg, parse_mode="Markdown", reply_markup=markup, disable_web_page_preview=True)
     else:
         bot.send_message(chat_id, "❌ Error creating email. Please try again.")
 
-# --- Start Handler ---
+# --- Command Handlers ---
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
@@ -79,6 +79,7 @@ def send_welcome(message):
         f"👇 *Use the buttons below to manage your mail:*"
     )
     
+    # Inline buttons for the message
     inline_markup = types.InlineKeyboardMarkup(row_width=2)
     btn_gen = types.InlineKeyboardButton("📧 Generate Mail", callback_data="gen_mail")
     btn_web = types.InlineKeyboardButton("🌐 Visit Website", url=PORTFOLIO_LINK)
@@ -86,27 +87,16 @@ def send_welcome(message):
     inline_markup.add(btn_gen)
     inline_markup.add(btn_web, btn_sup)
 
+    # FIXED: Bottom Reply Keyboard (Only one large button like before)
     reply_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    reply_markup.add("🗂️ LIVE GENERATE MAIL ⚡📢", "📥 Check Inbox")
+    reply_markup.add(types.KeyboardButton("📁 LIVE GENERATE MAIL ⚡📢"))
 
     bot.send_message(message.chat.id, welcome_text, parse_mode="Markdown", reply_markup=inline_markup, disable_web_page_preview=True)
     bot.send_message(message.chat.id, "💡 *Quick Access Menu Enabled*", parse_mode="Markdown", reply_markup=reply_markup)
 
-@bot.message_handler(func=lambda m: m.text == "🗂️ LIVE GENERATE MAIL ⚡📢")
-def handle_reply_gen(message):
+@bot.message_handler(func=lambda m: m.text == "📁 LIVE GENERATE MAIL ⚡📢")
+def handle_bottom_button(message):
     process_gen_mail(message.chat.id)
-
-@bot.message_handler(func=lambda message: message.text == "📥 Check Inbox")
-def handle_check_inbox_msg(message):
-    user = user_data.get(message.chat.id)
-    if not user:
-        bot.reply_to(message, "⚠️ Please generate an email first!")
-        return
-    msgs = get_messages(user['token'])
-    if not msgs:
-        bot.send_message(message.chat.id, "📭 *Inbox is empty.*", parse_mode="Markdown")
-    else:
-        bot.send_message(message.chat.id, "📥 *New messages found!*", parse_mode="Markdown")
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_query(call):
@@ -116,18 +106,19 @@ def callback_query(call):
     elif call.data == "refresh_inbox":
         user = user_data.get(call.message.chat.id)
         if not user:
-            bot.answer_callback_query(call.id, "Session Expired!", show_alert=True)
+            bot.answer_callback_query(call.id, "Session Expired! Generate new mail.", show_alert=True)
             return
+        
         msgs = get_messages(user['token'])
         if not msgs:
-            bot.answer_callback_query(call.id, "📭 Still Empty", show_alert=True)
+            bot.answer_callback_query(call.id, "📭 Inbox is empty.", show_alert=True)
         else:
             for m in msgs[:3]:
                 headers = {"Authorization": f"Bearer {user['token']}"}
                 m_detail = requests.get(f"{API_BASE}/messages/{m['id']}", headers=headers).json()
                 bot.send_message(call.message.chat.id, f"📩 *From:* {m['from']['address']}\n📝 *Subject:* {m['subject']}\n\n{m_detail.get('text', '')[:500]}", parse_mode="Markdown")
 
-# --- Web Server ---
+# --- Server Setup ---
 @app.route('/')
 def index():
     return "Bot is Live!"
