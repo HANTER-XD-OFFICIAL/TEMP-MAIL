@@ -166,24 +166,83 @@
         </div>
     </main>
 
-    <!-- EMAIL VIEWER -->
-    <div id="email-view" class="fixed inset-0 z-50 bg-white dark:bg-gray-900 transform translate-x-full transition-transform duration-300 flex flex-col">
-        <div class="px-5 py-4 border-b dark:border-gray-800 flex items-center justify-between">
-            <button onclick="closeEmail()" class="p-2"><span class="material-symbols-rounded">arrow_back</span></button>
-            <h2 class="font-bold truncate">Message</h2>
-            <div class="w-10"></div>
+    <!-- ================= FLOATING ACTION BUTTON (SEND) ================= -->
+    <button onclick="openCompose()" class="fab z-30 w-14 h-14 bg-brand-600 rounded-full text-white flex items-center justify-center">
+        <span class="material-symbols-rounded text-2xl">edit</span>
+    </button>
+
+    <!-- ================= EMAIL VIEWER ================= -->
+    <div id="email-view" class="fixed inset-0 z-40 bg-white dark:bg-gray-900 transform translate-x-full transition-transform duration-300 flex flex-col">
+        <div class="px-5 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center gap-4 bg-white dark:bg-gray-900">
+            <button onclick="closeEmailView()" class="p-2 -ml-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
+                <span class="material-symbols-rounded">arrow_back</span>
+            </button>
+            <h2 class="font-bold text-lg truncate">Message</h2>
         </div>
-        <div id="view-meta" class="p-5 border-b dark:border-gray-700 bg-gray-50 dark:bg-gray-800"></div>
-        <iframe id="view-frame" class="flex-1 w-full bg-white"></iframe>
+        <div class="p-5 border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
+            <h3 id="view-subject" class="font-bold text-lg mb-1">Subject</h3>
+            <p class="text-xs text-gray-500 flex justify-between">
+                <span id="view-sender">Sender</span>
+                <span id="view-date">Date</span>
+            </p>
+        </div>
+        <div class="flex-1 relative bg-white w-full">
+            <iframe id="view-frame" class="email-frame" sandbox="allow-popups"></iframe>
+        </div>
     </div>
 
-    <!-- BOTTOM NAV -->
-    <div class="fixed bottom-0 left-0 w-full p-4 grid grid-cols-2 gap-3 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t dark:border-gray-800">
-        <a href="https://github.com/HANTER-XD-OFFICIAL/TEMP-MAIL/releases/tag/TEMP-MAIL_APK" class="bg-gray-900 dark:bg-white text-white dark:text-gray-900 py-3 rounded-2xl font-bold text-center text-sm">Download APK</a>
-        <button onclick="generateNewEmail()" class="bg-brand-500 text-white py-3 rounded-2xl font-bold text-sm">New Address</button>
+    <!-- ================= COMPOSE VIEW (READY FOR FUTURE) ================= -->
+    <div id="compose-view" class="fixed inset-0 z-50 bg-white dark:bg-gray-900 transform translate-y-full transition-transform duration-300 flex flex-col">
+        <!-- Header -->
+        <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+            <button onclick="closeCompose()" class="p-2 -ml-2 text-gray-500">Cancel</button>
+            <h2 class="font-bold text-lg">New Message</h2>
+            <button onclick="sendEmail()" id="btn-send" class="px-4 py-1.5 bg-brand-500 text-white rounded-lg font-medium text-sm">Send</button>
+        </div>
+        
+        <!-- Form -->
+        <div class="flex-1 p-4 flex flex-col gap-4">
+            <!-- Status Alert for User -->
+            <div class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-xl border border-blue-100 dark:border-blue-800 flex items-start gap-3">
+                <span class="material-symbols-rounded text-blue-500 text-lg mt-0.5">info</span>
+                <div>
+                    <p class="text-xs font-bold text-blue-600 dark:text-blue-300">System Ready</p>
+                    <p class="text-[10px] text-blue-500 dark:text-blue-400 leading-tight">Sending is enabled but may be restricted by the server for external domains (Gmail/Yahoo) at this time.</p>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">To</label>
+                <input type="email" id="compose-to" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-brand-500 transition-colors" placeholder="recipient@example.com">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">Subject</label>
+                <input type="text" id="compose-subject" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-brand-500 transition-colors" placeholder="What's this about?">
+            </div>
+            <div class="flex-1 flex flex-col">
+                <label class="block text-xs font-medium text-gray-500 mb-1">Message</label>
+                <textarea id="compose-body" class="flex-1 w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-brand-500 transition-colors resize-none" placeholder="Write your email here..."></textarea>
+            </div>
+        </div>
     </div>
 
-    <div id="toast-container" class="fixed bottom-24 left-0 right-0 flex flex-col items-center px-4 pointer-events-none"></div>
+    <!-- ================= BOTTOM NAV ================= -->
+    <div class="fixed bottom-0 left-0 w-full p-4 bg-gradient-to-t from-white via-white to-transparent dark:from-gray-900 dark:via-gray-900 z-30">
+        <div class="flex gap-3">
+            <!-- DOWNLOAD BUTTON UPDATED -->
+            <a href="https://github.com/HANTER-XD-OFFICIAL/TEMP-MAIL/releases/tag/TEMP-MAIL_APK" target="_blank" class="flex-1 bg-gray-900 dark:bg-white dark:text-gray-900 text-white py-3 rounded-2xl font-bold text-center text-sm shadow-lg flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all">
+                <span class="material-symbols-rounded">download</span>
+                Download
+            </a>
+            <a href="https://hanter-xd-official.github.io/TEMP-MAIL/" target="_blank" class="flex-1 bg-brand-500 text-white py-3 rounded-2xl font-bold text-center text-sm shadow-lg shadow-brand-500/20 flex items-center justify-center gap-2 hover:bg-brand-600 active:scale-95 transition-all">
+                <span class="material-symbols-rounded">language</span>
+                Website
+            </a>
+        </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div id="toast-container" class="fixed bottom-24 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 z-50 w-full px-4 pointer-events-none"></
 
     <script>
         const API = "https://www.1secmail.com/api/v1/";
