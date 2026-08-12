@@ -9,7 +9,7 @@ from telebot import types
 
 # --- Configuration ---
 TOKEN = '8821453331:AAGG0KnJNrDT-nyKMAaa2xpa_lrp90nbK-I'
-ADMIN_ID = "@HANTER_XD_OFFICIAL" 
+ADMIN_ID = "https://t.me/hanter_xdofficial" 
 PORTFOLIO_LINK = "https://hanter-xd-official.github.io/PORTFOLIO/"
 API_BASE = "https://api.mail.tm"
 
