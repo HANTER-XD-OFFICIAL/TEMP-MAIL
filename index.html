@@ -53,12 +53,10 @@
         .loader-bar { width: 0%; height: 4px; background: linear-gradient(90deg, #8b5cf6, #ec4899); transition: width 0.2s ease; border-radius: 99px; }
         .email-frame { width: 100%; height: 100%; border: none; display: block; }
         
-        /* Toast Animation */
         .toast-enter { transform: translateY(100%); opacity: 0; }
         .toast-enter-active { transform: translateY(0); opacity: 1; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .toast-exit-active { transform: translateY(100%); opacity: 0; transition: all 0.3s ease-in; }
 
-        /* Floating Action Button */
         .fab {
             position: fixed;
             bottom: 90px;
@@ -71,7 +69,7 @@
 </head>
 <body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-300 h-screen overflow-hidden flex flex-col relative">
 
-    <!-- ================= SPIASH SCREEN ================= -->
+    <!-- SPLASH SCREEN -->
     <div id="splash-screen" class="fixed inset-0 z-50 bg-white dark:bg-gray-900 flex flex-col items-center justify-center transition-opacity duration-500">
         <div class="text-center">
             <span class="material-symbols-rounded text-6xl text-brand-500 mb-4">mail</span>
@@ -83,7 +81,7 @@
         </div>
     </div>
 
-    <!-- ================= APP HEADER ================= -->
+    <!-- APP HEADER -->
     <header class="flex-none px-5 py-4 flex items-center justify-between bg-white/80 dark:bg-gray-900/80 backdrop-blur-md sticky top-0 z-30 border-b border-gray-100 dark:border-gray-800">
         <div class="flex items-center gap-2">
             <span class="material-symbols-rounded text-brand-500">mark_email_unread</span>
@@ -94,7 +92,7 @@
         </button>
     </header>
 
-    <!-- ================= MAIN CONTENT ================= -->
+    <!-- MAIN CONTENT -->
     <main id="home-view" class="flex-1 overflow-y-auto no-scrollbar p-4 pb-32">
         
         <!-- Control Card -->
@@ -145,7 +143,7 @@
             </li>
         </ul>
 
-        <!-- ================= CONTACT SUPPORT ================= -->
+        <!-- Contact Support -->
         <section class="mt-8 mb-6 animate-slide-up" style="animation-delay: 0.25s;">
             <div class="flex items-center gap-2 mb-4 px-1">
                 <span class="material-symbols-rounded text-brand-500">support_agent</span>
@@ -154,47 +152,36 @@
             
             <div class="bg-white dark:bg-gray-800 rounded-3xl p-5 shadow-sm border border-gray-100 dark:border-gray-700">
                 <div class="grid grid-cols-5 gap-3">
-                    
-                    <!-- FACEBOOK -->
                     <a href="https://www.facebook.com/MD.RASEL.8.2.3.4" target="_blank" class="flex flex-col items-center gap-2 group">
                         <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform">
                             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.34 11.93 5.96 14.15 5.96C15.21 5.96 16.12 6.04 16.12 6.04V8.51H15.01C13.77 8.51 13.38 9.28 13.38 10.07V12.06H16.16L15.72 14.96H13.38V21.96C18.16 21.21 21.82 17.06 21.82 12.06C21.82 6.53 17.32 2.04 12 2.04Z"/></svg>
                         </div>
                         <span class="text-[10px] font-medium text-gray-500">Facebook</span>
                     </a>
-
-                    <!-- WHATSAPP -->
                     <a href="https://wa.me/8801882278234" target="_blank" class="flex flex-col items-center gap-2 group">
                         <div class="w-12 h-12 rounded-2xl bg-green-50 dark:bg-green-900/20 flex items-center justify-center text-green-600 dark:text-green-400 group-hover:scale-110 transition-transform">
                             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2ZM12.05 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 14.99 3.81 13.47 3.81 11.91C3.81 7.37 7.5 3.67 12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.05 20.15Z"/></svg>
                         </div>
                         <span class="text-[10px] font-medium text-gray-500">WhatsApp</span>
                     </a>
-
-                    <!-- GMAIL -->
                     <a href="mailto:alexraselchodhury@gmail.com" class="flex flex-col items-center gap-2 group">
                         <div class="w-12 h-12 rounded-2xl bg-red-50 dark:bg-red-900/20 flex items-center justify-center text-red-600 dark:text-red-400 group-hover:scale-110 transition-transform">
                             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4C2.9 4 2.01 4.9 2.01 6L2 18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4ZM20 8L12 13L4 8V6L12 11L20 6V8Z"/></svg>
                         </div>
                         <span class="text-[10px] font-medium text-gray-500">Gmail</span>
                     </a>
-
-                    <!-- TELEGRAM -->
                     <a href="https://t.me/HANTER_XD_OFFICIAL" target="_blank" class="flex flex-col items-center gap-2 group">
                         <div class="w-12 h-12 rounded-2xl bg-sky-50 dark:bg-sky-900/20 flex items-center justify-center text-sky-500 dark:text-sky-400 group-hover:scale-110 transition-transform">
                             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 11.944 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
                         </div>
                         <span class="text-[10px] font-medium text-gray-500">Telegram</span>
                     </a>
-
-                    <!-- INSTAGRAM -->
                     <a href="https://www.instagram.com/_md_rasel_34" target="_blank" class="flex flex-col items-center gap-2 group">
                         <div class="w-12 h-12 rounded-2xl bg-pink-50 dark:bg-pink-900/20 flex items-center justify-center text-pink-600 dark:text-pink-400 group-hover:scale-110 transition-transform">
                             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/></svg>
                         </div>
                         <span class="text-[10px] font-medium text-gray-500">Instagram</span>
                     </a>
-
                 </div>
             </div>
         </section>
@@ -205,12 +192,12 @@
         </div>
     </main>
 
-    <!-- ================= FLOATING ACTION BUTTON (SEND) ================= -->
+    <!-- FLOATING ACTION BUTTON (SEND) -->
     <button onclick="openCompose()" class="fab z-30 w-14 h-14 bg-brand-600 rounded-full text-white flex items-center justify-center">
         <span class="material-symbols-rounded text-2xl">edit</span>
     </button>
 
-    <!-- ================= EMAIL VIEWER ================= -->
+    <!-- EMAIL VIEWER -->
     <div id="email-view" class="fixed inset-0 z-40 bg-white dark:bg-gray-900 transform translate-x-full transition-transform duration-300 flex flex-col">
         <div class="px-5 py-4 border-b border-gray-100 dark:border-gray-800 flex items-center gap-4 bg-white dark:bg-gray-900">
             <button onclick="closeEmailView()" class="p-2 -ml-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
@@ -230,26 +217,14 @@
         </div>
     </div>
 
-    <!-- ================= COMPOSE VIEW (READY FOR FUTURE) ================= -->
+    <!-- COMPOSE VIEW -->
     <div id="compose-view" class="fixed inset-0 z-50 bg-white dark:bg-gray-900 transform translate-y-full transition-transform duration-300 flex flex-col">
-        <!-- Header -->
         <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
             <button onclick="closeCompose()" class="p-2 -ml-2 text-gray-500">Cancel</button>
             <h2 class="font-bold text-lg">New Message</h2>
             <button onclick="sendEmail()" id="btn-send" class="px-4 py-1.5 bg-brand-500 text-white rounded-lg font-medium text-sm">Send</button>
         </div>
-        
-        <!-- Form -->
         <div class="flex-1 p-4 flex flex-col gap-4">
-            <!-- Status Alert for User -->
-            <div class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-xl border border-blue-100 dark:border-blue-800 flex items-start gap-3">
-                <span class="material-symbols-rounded text-blue-500 text-lg mt-0.5">info</span>
-                <div>
-                    <p class="text-xs font-bold text-blue-600 dark:text-blue-300">System Ready</p>
-                    <p class="text-[10px] text-blue-500 dark:text-blue-400 leading-tight">Sending is enabled but may be restricted by the server for external domains (Gmail/Yahoo) at this time.</p>
-                </div>
-            </div>
-
             <div>
                 <label class="block text-xs font-medium text-gray-500 mb-1">To</label>
                 <input type="email" id="compose-to" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 outline-none focus:border-brand-500 transition-colors" placeholder="recipient@example.com">
@@ -265,10 +240,9 @@
         </div>
     </div>
 
-    <!-- ================= BOTTOM NAV ================= -->
+    <!-- BOTTOM NAV -->
     <div class="fixed bottom-0 left-0 w-full p-4 bg-gradient-to-t from-white via-white to-transparent dark:from-gray-900 dark:via-gray-900 z-30">
         <div class="flex gap-3">
-            <!-- DOWNLOAD BUTTON UPDATED -->
             <a href="https://github.com/HANTER-XD-OFFICIAL/TEMP-MAIL/releases/tag/TEMP-MAIL_APK" target="_blank" class="flex-1 bg-gray-900 dark:bg-white dark:text-gray-900 text-white py-3 rounded-2xl font-bold text-center text-sm shadow-lg flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all">
                 <span class="material-symbols-rounded">download</span>
                 Download
@@ -283,9 +257,9 @@
     <!-- TOAST CONTAINER -->
     <div id="toast-container" class="fixed bottom-24 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 z-50 w-full px-4 pointer-events-none"></div>
 
-    <!-- ================= LOGIC ================= -->
     <script>
-        const API_BASE = "https://api.mail.tm";
+        // Use .gw instead of .tm for better compatibility on GitHub Pages
+        const API_BASE = "https://api.mail.gw";
         let appState = { email: null, password: null, token: null, messages: [], timer: 600, timerId: null };
         
         const el = {
@@ -320,36 +294,54 @@
         }
 
         async function apiCall(endpoint, method = 'GET', body = null) {
-            const headers = { 'Content-Type': 'application/json' };
+            const headers = { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            };
             if (appState.token) headers['Authorization'] = `Bearer ${appState.token}`;
             try {
-                const res = await fetch(`${API_BASE}${endpoint}`, { method, headers, body: body ? JSON.stringify(body) : null });
+                const res = await fetch(`${API_BASE}${endpoint}`, { 
+                    method, 
+                    headers, 
+                    body: body ? JSON.stringify(body) : null,
+                    mode: 'cors' 
+                });
                 if (!res.ok) {
                     if (res.status === 401) return 'UNAUTHORIZED';
                     return null;
                 }
                 return await res.json();
-            } catch { return null; }
+            } catch (err) { 
+                console.error("API Error:", err);
+                return null; 
+            }
         }
 
         async function generateEmail() {
             el.emailAddr.innerHTML = '<span class="animate-pulse">Generating...</span>';
             const domains = await apiCall('/domains');
-            if (!domains) return showToast("Network Error", "error");
+            if (!domains || !domains['hydra:member']) return showToast("Network Error: API Blocked", "error");
+            
             const domain = domains['hydra:member'][0].domain;
-            const user = Math.random().toString(36).substring(7);
-            const pass = Math.random().toString(36).substring(7);
+            const user = Math.random().toString(36).substring(2, 10);
+            const pass = Math.random().toString(36).substring(2, 10);
             const email = `${user}@${domain}`;
+            
             const acc = await apiCall('/accounts', 'POST', { address: email, password: pass });
             if (acc) {
                 const tokenRes = await apiCall('/token', 'POST', { address: email, password: pass });
-                appState.email = email;
-                appState.password = pass;
-                appState.token = tokenRes.token;
-                el.emailAddr.innerText = email;
-                showToast("Email address ready", "success");
-                fetchMessages();
-                resetTimer();
+                if(tokenRes) {
+                    appState.email = email;
+                    appState.password = pass;
+                    appState.token = tokenRes.token;
+                    el.emailAddr.innerText = email;
+                    showToast("Email address ready", "success");
+                    fetchMessages();
+                    resetTimer();
+                }
+            } else {
+                showToast("Server Error: Retrying...", "warning");
+                setTimeout(generateEmail, 2000);
             }
         }
 
@@ -395,27 +387,23 @@
             el.viewPanel.classList.remove('translate-x-full');
             const fullMsg = await apiCall(`/messages/${id}`);
             const html = fullMsg.html ? fullMsg.html[0] : fullMsg.text;
-            document.getElementById('view-frame').srcdoc = `<style>body{font-family:sans-serif;padding:20px;color:#333}</style>${html}`;
+            document.getElementById('view-frame').srcdoc = `<style>body{font-family:sans-serif;padding:20px;color:#333;overflow-x:hidden}img{max-width:100%}</style>${html}`;
         }
 
         function openCompose() { el.composeView.classList.remove('translate-y-full'); }
         function closeCompose() { el.composeView.classList.add('translate-y-full'); }
         
-        // --- SEND MAIL LOGIC ---
         async function sendEmail() {
             const to = document.getElementById('compose-to').value;
             const subject = document.getElementById('compose-subject').value;
             const body = document.getElementById('compose-body').value;
             const btn = document.getElementById('btn-send');
             
-            if (!to || !subject || !body) return showToast("Please fill all fields", "warning");
+            if (!to || !subject || !body) return showToast("Fill all fields", "warning");
 
-            // UI Feedback
-            btn.innerText = "Processing...";
+            btn.innerText = "Sending...";
             btn.disabled = true;
-            btn.classList.add('opacity-50');
 
-            // Actual API Call
             const res = await apiCall('/messages', 'POST', {
                 from: { address: appState.email, name: "Temp User" },
                 to: [{ address: to, name: "" }],
@@ -423,28 +411,25 @@
                 html: body
             });
 
-            // Restore Button
             btn.innerText = "Send";
             btn.disabled = false;
-            btn.classList.remove('opacity-50');
 
             if (res && res.id) {
-                showToast("Email Sent Successfully!", "success");
+                showToast("Sent Successfully!", "success");
                 closeCompose();
                 document.getElementById('compose-to').value = '';
                 document.getElementById('compose-body').value = '';
                 document.getElementById('compose-subject').value = '';
             } else {
-                console.warn("Send failed. Likely API restriction.");
-                showToast("Failed. Server rejected external mail.", "error");
+                showToast("Failed to send", "error");
             }
         }
 
         function closeEmailView() { el.viewPanel.classList.add('translate-x-full'); }
         function copyToClipboard() { navigator.clipboard.writeText(appState.email).then(() => showToast("Copied!", "success")); }
         function refreshInbox() { fetchMessages(); showToast("Refreshed", "info"); }
-        function generateNewEmailWithConfirm() { if(confirm("Change email?")) generateEmail(); }
-        function deleteEmail() { if(confirm("Delete email?")) generateEmail(); }
+        function generateNewEmailWithConfirm() { if(confirm("Change email address?")) generateEmail(); }
+        function deleteEmail() { if(confirm("Delete current session?")) generateEmail(); }
 
         function startTimer() {
             if (appState.timerId) clearInterval(appState.timerId);
@@ -453,7 +438,11 @@
                 const m = Math.floor(appState.timer / 60);
                 const s = appState.timer % 60;
                 el.timer.innerText = `${m}:${s < 10 ? '0'+s : s}`;
-                if (appState.timer <= 0) { el.timer.classList.add('text-red-500'); showToast("Time expired", "warning"); clearInterval(appState.timerId); }
+                if (appState.timer <= 0) { 
+                    el.timer.classList.add('text-red-500'); 
+                    clearInterval(appState.timerId);
+                    showToast("Session Expired", "warning");
+                }
             }, 1000);
         }
         function resetTimer() { appState.timer = 600; el.timer.classList.remove('text-red-500'); startTimer(); }
