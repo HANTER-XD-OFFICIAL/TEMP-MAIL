@@ -9,7 +9,7 @@ from telebot import types
 
 # --- Configuration ---
 TOKEN = '8821453331:AAGG0KnJNrDT-nyKMAaa2xpa_lrp90nbK-I'
-ADMIN_ID = "HANTER_XD_OFFICIAL" 
+ADMIN_ID = "MD RASEL" 
 PORTFOLIO_LINK = "https://hanter-xd-official.github.io/PORTFOLIO/"
 API_BASE = "https://api.mail.tm"
 
@@ -63,7 +63,7 @@ def process_gen_mail(chat_id):
             f"🔑 *Password:* `{password}`\n\n"
             f"🛡️ *Security:* This mailbox is private and secure.\n"
             f"━━━━━━━━━━━━━━━━━━━━━\n"
-            f"👤 *Developer:* @HANTER_XD_OFFICIAL"
+            f"👤 *Developer:* {ADMIN_ID}"
         )
         markup = types.InlineKeyboardMarkup()
         markup.add(types.InlineKeyboardButton("📥 Refresh Inbox", callback_data="refresh_inbox"))
@@ -81,7 +81,7 @@ def send_welcome(message):
         f"🔐 *Protect your privacy* by using a disposable email address for social media, "
         f"websites, and apps.\n\n"
         f"━━━━━━━━━━━━━━━━━━\n"
-        f"👤 *Developer:* @HANTER_XD_OFFICIAL\n"
+        f"👤 *Developer:* {ADMIN_ID}\n"
         f"🚀 *Status:* System Online ✅\n"
         f"━━━━━━━━━━━━━━━━━━\n\n"
         f"👇 *Use the buttons below to manage your mail:*"
