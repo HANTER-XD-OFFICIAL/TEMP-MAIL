@@ -10,6 +10,7 @@ from telebot import types
 # --- Configuration ---
 TOKEN = '8821453331:AAHA_14xkD-f_OjvCUlY5CQ5iVYxIENBPB4'
 DEV_LINK = "https://t.me/HANTER_XD_OFFICIAL"
+SUPPORT_LINK = "https://t.me/HANTER_XD_OFFICIAL" # আপনি চাইলে এখানে সাপোর্ট গ্রুপের লিঙ্ক দিতে পারেন
 PORTFOLIO_LINK = "https://hanter-xd-official.github.io/PORTFOLIO/"
 API_BASE = "https://api.mail.tm"
 
@@ -55,10 +56,11 @@ def process_gen_mail(chat_id):
             f"━━━━━━━━━━━━━━━━━━━━━\n"
             f"👤 *Developer:* [@HANTER_XD_OFFICIAL]({DEV_LINK})"
         )
-        markup = types.InlineKeyboardMarkup(row_width=1)
+        markup = types.InlineKeyboardMarkup(row_width=2)
         markup.add(
             types.InlineKeyboardButton("📥 Refresh Inbox", callback_data="refresh_inbox"),
-            types.InlineKeyboardButton("🔄 Generate New", callback_data="gen_mail")
+            types.InlineKeyboardButton("🆕 Generate New", callback_data="gen_mail"),
+            types.InlineKeyboardButton("🛠️ Contact Support", url=SUPPORT_LINK)
         )
         bot.send_message(chat_id, res_msg, parse_mode="Markdown", reply_markup=markup, disable_web_page_preview=True)
     else:
@@ -79,15 +81,19 @@ def send_welcome(message):
         f"👇 *Use the buttons below to manage your mail:*"
     )
     
-    # Inline buttons for the message
+    # Inline buttons (Message Buttons)
     inline_markup = types.InlineKeyboardMarkup(row_width=2)
     btn_gen = types.InlineKeyboardButton("📧 Generate Mail", callback_data="gen_mail")
+    btn_check = types.InlineKeyboardButton("📥 Check Inbox", callback_data="refresh_inbox")
     btn_web = types.InlineKeyboardButton("🌐 Visit Website", url=PORTFOLIO_LINK)
-    btn_sup = types.InlineKeyboardButton("📢 Support", url=DEV_LINK)
-    inline_markup.add(btn_gen)
-    inline_markup.add(btn_web, btn_sup)
+    btn_admin = types.InlineKeyboardButton("👨‍💻 Contact Admin", url=DEV_LINK)
+    btn_sup = types.InlineKeyboardButton("🛠️ Contact Support", url=SUPPORT_LINK)
+    
+    inline_markup.add(btn_gen, btn_check)
+    inline_markup.add(btn_web)
+    inline_markup.add(btn_admin, btn_sup)
 
-    # FIXED: Bottom Reply Keyboard (Only one large button like before)
+    # Bottom Reply Keyboard
     reply_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     reply_markup.add(types.KeyboardButton("📁 LIVE GENERATE MAIL ⚡📢"))
 
@@ -106,9 +112,10 @@ def callback_query(call):
     elif call.data == "refresh_inbox":
         user = user_data.get(call.message.chat.id)
         if not user:
-            bot.answer_callback_query(call.id, "Session Expired! Generate new mail.", show_alert=True)
+            bot.answer_callback_query(call.id, "⚠️ No active email! Please generate one first.", show_alert=True)
             return
         
+        bot.answer_callback_query(call.id, "Checking inbox...")
         msgs = get_messages(user['token'])
         if not msgs:
             bot.answer_callback_query(call.id, "📭 Inbox is empty.", show_alert=True)
