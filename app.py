@@ -9,7 +9,8 @@ from telebot import types
 
 # --- কনফিগারেশন ---
 TOKEN = '8821453331:AAGG0KnJNrDT-nyKMAaa2xpa_lrp90nbK-I'
-ADMIN_ID = "HANTER_XD_OFFICIAL" # আপনার আইডি
+ADMIN_ID = "HANTER_XD_OFFICIAL" 
+PORTFOLIO_LINK = "https://hanter-xd-official.github.io/PORTFOLIO/" # আপনার পোর্টফোলিও লিঙ্ক
 API_BASE = "https://api.mail.tm"
 
 app = Flask(__name__)
@@ -46,7 +47,6 @@ def get_messages(token):
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-    # স্টার্ট মেসেজে আপনার নাম এবং ইউনিক ডিজাইন
     welcome_msg = (
         f"👋 *Hi {message.from_user.first_name}!*\n\n"
         f"Welcome to *Temp Mail Pro Bot* 📧\n"
@@ -58,12 +58,12 @@ def send_welcome(message):
     markup = types.InlineKeyboardMarkup(row_width=2)
     btn1 = types.InlineKeyboardButton("📧 Generate Mail", callback_data="gen_mail")
     btn2 = types.InlineKeyboardButton("📢 Support", url=f"https://t.me/{ADMIN_ID}")
-    btn3 = types.InlineKeyboardButton("🌐 Visit Website", url="https://t.me/HANTER_XD_OFFICIAL") # আপনার চ্যানেল লিংক দিতে পারেন
+    # এখানে আপনার পোর্টফোলিও লিঙ্ক সেট করা হয়েছে
+    btn3 = types.InlineKeyboardButton("🌐 Visit Website", url=PORTFOLIO_LINK) 
+    
     markup.add(btn1)
     markup.add(btn2, btn3)
 
-    # একটি সুন্দর ছবিসহ মেসেজ পাঠাতে চাইলে (অপশনাল)
-    # bot.send_photo(message.chat.id, "IMAGE_URL", caption=welcome_msg, parse_mode="Markdown", reply_markup=markup)
     bot.send_message(message.chat.id, welcome_msg, parse_mode="Markdown", reply_markup=markup)
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -84,7 +84,7 @@ def callback_query(call):
             
             markup = types.InlineKeyboardMarkup()
             markup.add(types.InlineKeyboardButton("📥 Refresh Inbox", callback_data="refresh_inbox"))
-            markup.add(types.InlineKeyboardButton("🗑 Delete Mail", callback_data="gen_mail"))
+            markup.add(types.InlineKeyboardButton("🗑 Generate New", callback_data="gen_mail"))
             
             bot.edit_message_text(res_msg, call.message.chat.id, call.message.message_id, 
                                  parse_mode="Markdown", reply_markup=markup)
@@ -108,7 +108,7 @@ def callback_query(call):
                 subject = m['subject'] or "No Subject"
                 bot.send_message(call.message.chat.id, 
                                 f"📩 *New Mail!*\n\n*From:* {sender}\n*Subject:* {subject}\n\n"
-                                f"বিস্তারিত জানতে আমাদের ওয়েব লিংকে যান।", 
+                                f"বিস্তারিত জানতে ইনবক্স রিফ্রেশ করুন।", 
                                 parse_mode="Markdown")
 
 # --- ওয়েব সার্ভার ---
