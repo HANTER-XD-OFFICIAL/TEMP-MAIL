@@ -9,7 +9,7 @@ from telebot import types
 
 # --- Configuration ---
 TOKEN = '8821453331:AAGG0KnJNrDT-nyKMAaa2xpa_lrp90nbK-I'
-ADMIN_ID = "MD RASEL" 
+ADMIN_ID = "@HANTER_XD_OFFICIAL" 
 PORTFOLIO_LINK = "https://hanter-xd-official.github.io/PORTFOLIO/"
 API_BASE = "https://api.mail.tm"
 
@@ -155,7 +155,7 @@ if __name__ == "__main__":
     # Start Flask server in a background thread
     t = Thread(target=run_flask)
     t.start()
-    print(f"Bot started successfully by @HANTER_XD_OFFICIAL")
+    print(f"Bot started successfully by {ADMIN_ID}")
     
     # Start Telegram Bot polling
     bot.infinity_polling()
