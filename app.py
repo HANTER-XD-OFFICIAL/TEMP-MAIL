@@ -8,8 +8,8 @@ from threading import Thread
 from telebot import types
 
 # --- Configuration ---
-TOKEN = '8821453331:AAGG0KnJNrDT-nyKMAaa2xpa_lrp90nbK-I'
-ADMIN_ID = "https://t.me/hanter_xdofficial" 
+TOKEN = '8821453331:AAHA_14xkD-f_OjvCUlY5CQ5iVYxIENBPB4'
+ADMIN_ID = "https://t.me/HANTER_XD_OFFICIAL" 
 PORTFOLIO_LINK = "https://hanter-xd-official.github.io/PORTFOLIO/"
 API_BASE = "https://api.mail.tm"
 
