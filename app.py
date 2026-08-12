@@ -44,6 +44,14 @@ def get_messages(token):
     except:
         return []
 
+# --- Bottom Menu (Permanent Keyboard) ---
+def get_bottom_menu():
+    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    markup.row(types.KeyboardButton("📁 LIVE GENERATE MAIL ⚡📢"))
+    markup.row(types.KeyboardButton("📥 Check Inbox"), types.KeyboardButton("👨‍💻 Contact Admin"))
+    markup.row(types.KeyboardButton("🛠️ Contact Support"))
+    return markup
+
 # --- Generation Logic ---
 def process_gen_mail(chat_id):
     email, password, token = generate_account()
@@ -54,8 +62,9 @@ def process_gen_mail(chat_id):
             f"📧 *Address:* `{email}`\n"
             f"🔑 *Password:* `{password}`\n\n"
             f"━━━━━━━━━━━━━━━━━━━━━\n"
-            f"👤 *Developer:* [@HANTER_XD_OFFICIAL]({DEV_LINK})"
+            f"👤 *Developer:* [HANTER_XD_OFFICIAL]({DEV_LINK})"
         )
+        # Inline buttons for generated mail
         markup = types.InlineKeyboardMarkup(row_width=2)
         markup.add(
             types.InlineKeyboardButton("📥 Refresh Inbox", callback_data="refresh_inbox"),
@@ -64,17 +73,6 @@ def process_gen_mail(chat_id):
         bot.send_message(chat_id, res_msg, parse_mode="Markdown", reply_markup=markup, disable_web_page_preview=True)
     else:
         bot.send_message(chat_id, "❌ Error creating email. Please try again.")
-
-# --- Bottom Menu Construction ---
-def get_bottom_menu():
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    # Row 1: Main Button
-    markup.row(types.KeyboardButton("📁 LIVE GENERATE MAIL ⚡📢"))
-    # Row 2: Secondary Buttons
-    markup.row(types.KeyboardButton("📥 Check Inbox"), types.KeyboardButton("👨‍💻 Contact Admin"))
-    # Row 3: Support Button
-    markup.row(types.KeyboardButton("🛠️ Contact Support"))
-    return markup
 
 # --- Command Handlers ---
 
@@ -85,61 +83,83 @@ def send_welcome(message):
         f"🔐 *Protect your privacy* by using a disposable email address for social media, "
         f"websites, and apps.\n\n"
         f"━━━━━━━━━━━━━━━━━━━━━\n"
-        f"👤 *Developer:* [@HANTER_XD_OFFICIAL]({DEV_LINK})\n"
+        f"👤 *Developer:* [HANTER_XD_OFFICIAL]({DEV_LINK})\n"
         f"🚀 *Status:* System Online ✅\n"
         f"━━━━━━━━━━━━━━━━━━━━━\n\n"
-        f"👇 *Use the menu below to manage your mail:*"
+        f"👇 *Use the buttons below to manage your mail:*"
     )
     
+    # Inline buttons (Message Buttons)
+    inline_markup = types.InlineKeyboardMarkup(row_width=2)
+    btn_gen = types.InlineKeyboardButton("📧 Generate Mail", callback_data="gen_mail")
+    btn_web = types.InlineKeyboardButton("🌐 Visit Website ↗️", url=PORTFOLIO_LINK)
+    btn_sup = types.InlineKeyboardButton("📢 Support ↗️", url=DEV_LINK)
+    inline_markup.add(btn_gen)
+    inline_markup.add(btn_web, btn_sup)
+
+    # Sending Welcome message with Inline Buttons AND Bottom Menu
     bot.send_message(
         message.chat.id, 
         welcome_text, 
         parse_mode="Markdown", 
-        reply_markup=get_bottom_menu(), 
+        reply_markup=inline_markup, 
         disable_web_page_preview=True
     )
+    # This activates the Bottom Menu
+    bot.send_message(
+        message.chat.id, 
+        "💡 *Quick Access Menu Enabled*", 
+        parse_mode="Markdown", 
+        reply_markup=get_bottom_menu()
+    )
 
-# --- Bottom Menu Message Handlers ---
+# --- Message Handlers for Bottom Menu ---
 
 @bot.message_handler(func=lambda m: m.text == "📁 LIVE GENERATE MAIL ⚡📢")
-def handle_gen_mail(message):
+def handle_bottom_gen(message):
     process_gen_mail(message.chat.id)
 
 @bot.message_handler(func=lambda m: m.text == "📥 Check Inbox")
-def handle_check_inbox(message):
+def handle_bottom_check(message):
     user = user_data.get(message.chat.id)
     if not user:
-        bot.send_message(message.chat.id, "⚠️ No active email found! Please generate one first.", parse_mode="Markdown")
+        bot.send_message(message.chat.id, "⚠️ No active email found! Please generate one first.")
         return
-    
     bot.send_message(message.chat.id, "🔎 *Checking for messages...*", parse_mode="Markdown")
-    msgs = get_messages(user['token'])
-    if not msgs:
-        bot.send_message(message.chat.id, "📭 *Inbox is empty.*", parse_mode="Markdown")
-    else:
-        for m in msgs[:3]:
-            headers = {"Authorization": f"Bearer {user['token']}"}
-            m_detail = requests.get(f"{API_BASE}/messages/{m['id']}", headers=headers).json()
-            bot.send_message(message.chat.id, f"📩 *From:* {m['from']['address']}\n📝 *Subject:* {m['subject']}\n\n{m_detail.get('text', '')[:500]}", parse_mode="Markdown")
+    # Fetch and show messages logic...
+    check_logic(message.chat.id, user['token'])
 
 @bot.message_handler(func=lambda m: m.text == "👨‍💻 Contact Admin")
-def handle_admin(message):
-    bot.send_message(message.chat.id, f"👨‍💻 *Click below to contact Admin:*\n{DEV_LINK}", parse_mode="Markdown")
+def handle_bottom_admin(message):
+    bot.send_message(message.chat.id, f"👨‍💻 Contact Admin: {DEV_LINK}")
 
 @bot.message_handler(func=lambda m: m.text == "🛠️ Contact Support")
-def handle_support(message):
-    bot.send_message(message.chat.id, f"🛠️ *Click below for Support:*\n{SUPPORT_LINK}", parse_mode="Markdown")
+def handle_bottom_support(message):
+    bot.send_message(message.chat.id, f"🛠️ Support: {SUPPORT_LINK}")
+
+# --- Common Logic ---
+def check_logic(chat_id, token):
+    msgs = get_messages(token)
+    if not msgs:
+        bot.send_message(chat_id, "📭 *Inbox is empty.*", parse_mode="Markdown")
+    else:
+        for m in msgs[:3]:
+            headers = {"Authorization": f"Bearer {token}"}
+            m_detail = requests.get(f"{API_BASE}/messages/{m['id']}", headers=headers).json()
+            bot.send_message(chat_id, f"📩 *From:* {m['from']['address']}\n📝 *Subject:* {m['subject']}\n\n{m_detail.get('text', '')[:500]}", parse_mode="Markdown")
 
 # --- Callback Handlers ---
-
 @bot.callback_query_handler(func=lambda call: True)
 def callback_query(call):
     if call.data == "gen_mail":
         bot.answer_callback_query(call.id, "Generating...")
         process_gen_mail(call.message.chat.id)
     elif call.data == "refresh_inbox":
-        # reuse the inbox check logic
-        handle_check_inbox(call.message)
+        user = user_data.get(call.message.chat.id)
+        if user:
+            check_logic(call.message.chat.id, user['token'])
+        else:
+            bot.answer_callback_query(call.id, "Session Expired!", show_alert=True)
 
 # --- Server Setup ---
 @app.route('/')
