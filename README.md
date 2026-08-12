@@ -126,7 +126,7 @@ Delete Message button:
 **Branding:** Powered by MD RASEL  
 
 <p align="left">
-  <a href="https://www.facebook.com/MD.RASEL.8.2.3.4" target="_blank">
+  <a href="[[https://www.facebook.com/MD.RASEL.8.2.3.4](https://www.facebook.com/md.rasel.7.8.2.3.4)]([https://www.facebook.com/md.rasel.7.8.2.3.4](https://www.facebook.com/md.rasel.7.8.2.3.4))" target="_blank">
     <img src="https://img.shields.io/badge/Facebook-Profile-1877F2?style=for-the-badge&logo=facebook&logoColor=white" />
   </a>
 </p>
@@ -140,7 +140,7 @@ Delete Message button:
     <img src="https://img.shields.io/badge/WhatsApp-Chat-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" />
   </a>
 
-  <a href="https://www.facebook.com/MD.RASEL.8.2.3.4" target="_blank">
+  <a href="https://www.facebook.com/md.rasel.7.8.2.3.4" target="_blank">
     <img src="https://img.shields.io/badge/Facebook-Message-4267B2?style=for-the-badge&logo=messenger&logoColor=white" />
   </a>
 </p>
@@ -174,5 +174,11 @@ Do not use temporary email services for illegal or abusive activities.
     <img src="https://img.shields.io/badge/Open-Website-6200EA?style=for-the-badge&logo=googlechrome&logoColor=white" />
   </a>
 </p>
+
+---
+## 🌍 Open Live Bot Generate Mail
+<a href="https://t.me/TEMPMAIL8234_bot" target="_blank">
+  <img src="https://img.shields.io/badge/✨_LIVE_BOT-GENERATE_MAIL_NOW-white?style=for-the-badge&logo=telegram&logoColor=white&labelColor=000000&color=26A8ED" />
+</a>
 
 ---
